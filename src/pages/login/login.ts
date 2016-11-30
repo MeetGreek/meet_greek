@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { Platform, NavController, MenuController, AlertController } from 'ionic-angular';
+import { Facebook } from 'ionic-native';
+import { HomePage } from '../home/home';
+import { Data } from '../../providers/data';
 
 /*
   Generated class for the Login page.
@@ -13,10 +16,17 @@ import { NavController } from 'ionic-angular';
 })
 export class LoginPage {
 
-  constructor(public navCtrl: NavController) {}
+  constructor(public nav: NavController, public platform: Platform, public menu: MenuController, public dataService: Data, public alertCtrl: AlertController) {
+    this.menu.enable(false);
+  }
 
-  ionViewDidLoad() {
-    console.log('Hello LoginPage Page');
+  login(): void {
+    this.getProfile();
+  }
+
+  getProfile(): void {
+    this.menu.enable(true)
+    this.nav.setRoot(HomePage);
   }
 
 }
