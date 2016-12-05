@@ -27,11 +27,17 @@ export class MyApp {
     });
   }
 
-    openPage(page): void {
+  openPage(page): void {
 
-    }
+  }
 
-    logout(): void {
-
-    }
+  logout(): void {
+    this.menu.close(); 
+    this.menu.enable(false); 
+    this.nav.setRoot(LoginPage); 
+    this.dataService.fbid = null; 
+    this.dataService.username = null;
+    this.dataService.picture = null; 
+    Facebook.logout();
+  }
 }
