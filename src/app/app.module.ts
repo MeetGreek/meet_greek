@@ -5,6 +5,7 @@ import { HomePage } from '../pages/home/home';
 import { LoginPage } from '../pages/login/login';
 import { AboutPage } from '../pages/about/about';
 import { Data } from '../providers/data';
+import firebase from 'firebase';
 
 @NgModule({
   declarations: [

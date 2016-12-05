@@ -6,6 +6,7 @@ import { HomePage } from '../pages/home/home';
 import { AboutPage } from '../pages/about/about';
 import { LoginPage } from '../pages/login/login';
 import { Data } from '../providers/data';
+import firebase from 'firebase';
 
 
 @Component({
@@ -19,6 +20,13 @@ export class MyApp {
   aboutPage: any = AboutPage;
 
   constructor(public platform: Platform, public dataService: Data, public menu: MenuController) {
+    firebase.initializeApp({
+        apiKey: "AIzaSyCPws3I2YmCW-kGvadQYlgm9JypziF6Z14",
+        authDomain: "meetgreek-1783b.firebaseapp.com",
+        databaseURL: "https://meetgreek-1783b.firebaseio.com",
+        storageBucket: "meetgreek-1783b.appspot.com",
+        messagingSenderId: "762176154683"
+    });
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
