@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { Data } from '../../providers/data';
+import { Facebook } from 'ionic-native';
+import firebase from 'firebase';
 
 @Component({
   selector: 'page-home',
@@ -14,6 +16,6 @@ export class HomePage {
   }
 
   sendMessage(): void {
-
+    
   }
 }

@@ -3,6 +3,7 @@ import { Platform, NavController, MenuController, AlertController, LoadingContro
 import { Facebook } from 'ionic-native';
 import { HomePage } from '../home/home';
 import { Data } from '../../providers/data';
+import firebase from 'firebase';
 
 @Component({
   selector: 'page-login',
@@ -25,9 +26,18 @@ export class LoginPage {
 
     this.loading.present();
 
-    Facebook.login(['public_profile']).then((response) => {
+    Facebook.login(['email']).then((response) => {
+      let facebookCredential = firebase.auth.FacebookAuthProvider
+            .credential(response.authResponse.accessToken);
 
-      this.getProfile();
+        firebase.auth().signInWithCredential(facebookCredential)
+        .then((success) => {
+            this.getProfile();
+        })
+        .catch((error) => {
+            console.log("Firebase failure: " + JSON.stringify(error));
+        });
+      
 
     }, (err) => {
 
@@ -45,16 +55,23 @@ export class LoginPage {
   }
 
   getProfile(): void {
-
     Facebook.api('/me?fields=id,name,picture', ['public_profile']).then(
-
       (response) => {
-
         console.log(response);
 
         this.dataService.fbid = response.id;
         this.dataService.username = response.name;
         this.dataService.picture = response.picture.data.url;
+
+        var user = firebase.auth().currentUser;
+        user.updateProfile({
+          displayName: this.dataService.username,
+          photoURL: this.dataService.picture
+        }).then(function() {
+          // Update successful.
+        }, function(error) {
+          // An error happened.
+        });
 
         this.menu.enable(true);
         this.loading.dismiss();
@@ -79,6 +96,16 @@ export class LoginPage {
 
     );
 
+  }
+
+  createFireBaseAccount(): void {
+    var user = firebase.auth().currentUser;
+
+    if (user) {
+      // User is signed in.
+    } else {
+      // No user is signed in.
+    }
   }
 
 }
