@@ -72,7 +72,7 @@ export class LoginPage {
         }, function(error) {
           // An error happened.
         });
-
+        this.writeUserData();
         this.menu.enable(true);
         this.loading.dismiss();
         this.nav.setRoot(HomePage);
@@ -98,14 +98,11 @@ export class LoginPage {
 
   }
 
-  createFireBaseAccount(): void {
-    var user = firebase.auth().currentUser;
-
-    if (user) {
-      // User is signed in.
-    } else {
-      // No user is signed in.
-    }
+  writeUserData(): void {
+    firebase.database().ref('users/' + this.dataService.fbid).set({
+      username: this.dataService.username,
+      profile_picture : this.dataService.picture
+   });
   }
 
 }

@@ -9,23 +9,39 @@
   </ion-navbar>
 </ion-header>
 <ion-content class="home" #chat id="chat">
-  <ion-list no-lines>
+  <ion-card>
+  <img [src]="currentUserImage"/>
+  <ion-card-content>
+    <ion-card-title>
+      {{ currentUser }}
+    </ion-card-title>
+    <p>
+      
+    </p>
+  </ion-card-content>
+</ion-card>
+
+
+
+
+
+  <!--<ion-list no-lines>
     <ion-item>
       <ion-avatar item-left>
         <img src="">
       </ion-avatar>
-      <h2> Name here Branch </h2>
+      <h2> {{currentUser}} </h2>
       <p> message here </p>
     </ion-item>
-  </ion-list>
+  </ion-list>-->
 </ion-content>
 <ion-footer>
-  <ion-toolbar>
+  <!--<ion-toolbar>
     <ion-input [(ngModel)]="chatMessage" type="text" placeholder="enter message...">
     </ion-input>
     <button ion-button icon-only (click)="sendMessage()" style="position:absolute; right: 0; top: 0; margin: 0;">
         <ion-icon name= "chatbubbles" >
           </ion-icon>
           </button>
-  </ion-toolbar>
+  </ion-toolbar>-->
 </ion-footer>
