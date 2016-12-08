@@ -4,12 +4,15 @@ import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { LoginPage } from '../pages/login/login';
 import { AboutPage } from '../pages/about/about';
+import { IntroPage } from '../pages/intro/intro';
 import { Data } from '../providers/data';
+import { Storage } from '@ionic/storage' ;
 import firebase from 'firebase';
 
 @NgModule({
   declarations: [
     MyApp,
+    IntroPage,
     HomePage,
     LoginPage,
     AboutPage
@@ -20,10 +23,11 @@ import firebase from 'firebase';
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
+    IntroPage,
     HomePage,
     LoginPage,
     AboutPage
   ],
-  providers: [Data]
+  providers: [Data, Storage]
 })
 export class AppModule {}

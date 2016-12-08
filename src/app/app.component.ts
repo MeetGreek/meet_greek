@@ -5,6 +5,7 @@ import { StatusBar } from 'ionic-native';
 import { HomePage } from '../pages/home/home';
 import { AboutPage } from '../pages/about/about';
 import { LoginPage } from '../pages/login/login';
+import { IntroPage } from '../pages/intro/intro';
 import { Data } from '../providers/data';
 import firebase from 'firebase';
 
