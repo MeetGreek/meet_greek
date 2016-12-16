@@ -1,22 +1,41 @@
-<ion-content padding>
+<ion-header>
+    <ion-navbar color="primary">
+        <ion-title>Meet Greek Login</ion-title>    
+    </ion-navbar>
+</ion-header>
 
-  <ion-row>
-    <ion-col>
-      LOGO HERE?
-    </ion-col>
-  </ion-row>
+<ion-content class="padding">
+   <!--<form [formGroup]="loginForm">
+    <ion-list>
+       
+        <ion-item>
+            <ion-label floating>Email Facebook</ion-label>
+            <ion-input type="text" formControlName="email"></ion-input>
+        </ion-item>
 
-  <ion-row>
-    <ion-col>
-      <p>Meet Greek</p>
+        <ion-item>
+            <ion-label floating>Password</ion-label>
+            <ion-input type="password" formControlName="password"></ion-input>
+        </ion-item>
+    </ion-list>
+    
+    <div padding>
+      <button ion-button primary block (click)="signin()" [disabled]="!loginForm.valid">Sign In</button>
+    </div>
+    
+    <div padding>
+      <button ion-button full clear favorite (click)="createAccount()" [disabled]="!loginForm.valid">
+          <ion-icon name="person"></ion-icon>
+          Create an Account</button>
+    </div>
+   </form>-->
 
-      <p>Log in with <strong>Facebook</strong> below to get started5.</p>
-    </ion-col>
-  </ion-row>
-
-  <ion-row>
-    <ion-col>
-      <a (click)="login()"><img src="assets/images/facebook-button.png" class="login-button" /></a>
-    </ion-col>
-  </ion-row>
+   <!--<h3 center>
+    Facebook Auth Example
+  </h3>-->
+    <div padding>
+        <button ion-button primary block  (click)="facebookLogin()">
+            Log In with Facebook
+        </button>
+   </div>
 </ion-content>

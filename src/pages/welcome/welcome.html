@@ -1,0 +1,27 @@
+<ion-header>
+    <ion-navbar color="primary">
+        <ion-title>Welcome</ion-title>
+        <ion-buttons end> <button ion-button icon-only (click) = "goToProfile()" >Profile<ion-icon name= "arrow-forward" ></ion-icon></button> </ion-buttons>
+    </ion-navbar>
+</ion-header>
+<ion-content>
+    <ion-card>
+        <ion-card-content>
+            <ion-item>
+                <h1 class="center">Welcome,</h1>
+            </ion-item>
+        </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+        <img *ngIf="!user.profile_picture" src="assets/images/default.png"/>
+        <img *ngIf="user.profile_picture" src={{user.profile_picture}} />
+    </ion-card>
+    <ion-card>
+        <ion-card-content>
+            <ion-item>
+                <h1 class="center">{{user.username}}!</h1>
+            </ion-item>
+        </ion-card-content>
+    </ion-card>
+</ion-content>

@@ -1,0 +1,57 @@
+<ion-header>
+    <ion-navbar color="primary">
+        <ion-title>Account</ion-title>
+        <ion-buttons left> <button ion-button (click)="edit()">Edit</button> </ion-buttons>
+        <ion-buttons end> <button ion-button icon-only (click)="next()"><ion-icon name= "arrow-forward" ></ion-icon></button> </ion-buttons>
+    </ion-navbar>
+</ion-header>
+
+<ion-content>
+    <div padding>
+        <ion-segment [(ngModel)]="profilePage">
+            <ion-segment-button value="profile">
+                Profile
+            </ion-segment-button>
+            <ion-segment-button value="settings">
+                Settings
+            </ion-segment-button>
+        </ion-segment>
+    </div>
+
+    <!--Profile Segment-->
+    <div [ngSwitch]="profilePage">
+        <ion-list *ngSwitchCase="'profile'">
+            <ion-item>
+                 <ion-card>
+                    <img *ngIf="!user.profile_picture" src="assets/images/default.jpg" />
+                    <img *ngIf="user.profile_picture" src="{{user.profile_picture}}" />
+                </ion-card>
+            </ion-item>
+            <!--<ion-item>
+                <button ion-button full (click)="updatePicture()">Change Picture</button>
+            </ion-item>-->
+            <ion-item>
+                {{user.username}}
+            </ion-item>
+            <ion-item>
+                {{user.aboutMe}}
+            </ion-item>
+            <ion-item>
+                {{user.descent}}
+            </ion-item>
+            <ion-item>
+                {{user.areas}}
+            </ion-item>
+            <ion-item>
+                {{user.church}}
+            </ion-item>
+        </ion-list>
+        
+        <!--Settings Segment-->
+        <ion-list *ngSwitchCase="'settings'">
+            <ion-item>
+                <a ion-item primary (click)="logout()">Logout</a>
+            </ion-item>
+        </ion-list>
+    </div>
+</ion-content>

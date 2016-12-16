@@ -1,28 +1,17 @@
 import { Injectable } from '@angular/core';
+import { Http } from '@angular/http';
+import 'rxjs/add/operator/map';
+
 import { Storage } from '@ionic/storage';
 
 @Injectable()
 export class Data {
-  fbid: number;
-  username: string;
-  picture: string;
+  userEmail: string;
+  userName: string;
+  userPicture: string;
 
-  constructor() {
-    //this.storage.set('fbid', this.fbid);
+  constructor(public http: Http) {
+    
   }
 
-  // Get Current User's UID
-  // getUid() {
-  //   return this.local.get('uid');
-  // }
-
-  // // Get Info of Single User
-  // getUser() {
-  //   // Getting UID of Logged In User
-  //   return this.getUid().then(uid => {
-  //     return this.username;
-  //   });
-  // }
 }
-
-

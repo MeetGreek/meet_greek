@@ -1,52 +1,69 @@
-import { Component, ViewChild } from "@angular/core";
-import { Facebook } from 'ionic-native';
-import { Nav, Platform, MenuController } from 'ionic-angular';
-import { StatusBar } from 'ionic-native';
-import { HomePage } from '../pages/home/home';
-import { AboutPage } from '../pages/about/about';
+import { Component } from '@angular/core';
+import { Platform } from 'ionic-angular';
+import { StatusBar, Splashscreen } from 'ionic-native';
+import { AngularFire } from 'angularfire2';
 import { LoginPage } from '../pages/login/login';
+import { TabsPage } from '../pages/tabs/tabs';
 import { IntroPage } from '../pages/intro/intro';
-import { Data } from '../providers/data';
-import firebase from 'firebase';
+import { WelcomePage } from '../pages/welcome/welcome';
+import { DescentPage } from '../pages/descent/descent';
+import { AreasPage } from '../pages/areas/areas';
+import { ChurchPage } from '../pages/church/church';
+import { AboutMePage } from '../pages/about-me/about-me';
+import { EditProfilePage } from '../pages/edit-profile/edit-profile';
 
+
+
+
+
+import { AuthProvider } from '../providers/auth-provider/auth-provider';
+import { Storage } from '@ionic/storage';
+import firebase from 'firebase';
 
 @Component({
   templateUrl: 'app.html'
 })
 export class MyApp {
-  @ViewChild(Nav) nav: Nav;
+  rootPage:any;
 
-  rootPage: any = LoginPage;
-  homePage: any = HomePage;
-  aboutPage: any = AboutPage;
-
-  constructor(public platform: Platform, public dataService: Data, public menu: MenuController) {
-    firebase.initializeApp({
-        apiKey: "AIzaSyCPws3I2YmCW-kGvadQYlgm9JypziF6Z14",
-        authDomain: "meetgreek-1783b.firebaseapp.com",
-        databaseURL: "https://meetgreek-1783b.firebaseio.com",
-        storageBucket: "meetgreek-1783b.appspot.com",
-        messagingSenderId: "762176154683"
-    });
+  constructor(
+    platform: Platform, 
+    public af: AngularFire, 
+    public authProvider:AuthProvider, 
+    public storage: Storage) {
+    // firebase.initializeApp({
+    //   apiKey: "AIzaSyAoSg_zrN3dqxkZNlTwj1MaC4Y-VwfNWUI",
+    //   authDomain: "fir-chat-facebook.firebaseapp.com",
+    //   databaseURL: "https://fir-chat-facebook.firebaseio.com",
+    //   storageBucket: "fir-chat-facebook.appspot.com"
+    // })
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
-      // StatusBar.styleDefault();
-      // Splashscreen.hide();
+      StatusBar.styleDefault();
+      Splashscreen.hide();
+      this.intialize();
     });
   }
 
-  openPage(page): void {
+  intialize() {
+    let hasUserEnterDetails;
 
-  }
-
-  logout(): void {
-    this.menu.close(); 
-    this.menu.enable(false); 
-    this.nav.setRoot(LoginPage); 
-    this.dataService.fbid = null; 
-    this.dataService.username = null;
-    this.dataService.picture = null; 
-    Facebook.logout();
+    this.storage.get('hasUserEnterDetails').then((result) => {
+        if (result == true) {
+          hasUserEnterDetails = true;
+        }else {
+          hasUserEnterDetails = false;
+        }
+        this.af.auth.subscribe(auth => {
+        if(auth && hasUserEnterDetails == false) {
+            this.rootPage = WelcomePage;
+          } else if(auth && hasUserEnterDetails == true) {
+            this.rootPage = TabsPage;
+          }else{
+            this.rootPage = LoginPage;
+          }
+      });
+    });
   }
 }
