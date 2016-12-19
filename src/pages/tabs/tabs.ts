@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
-import { Platform } from 'ionic-angular';
 import { ChatsPage } from '../chats/chats'; 
 import { AccountPage } from '../account/account';
 import { UsersPage } from '../users/users';
-import { Storage } from '@ionic/storage';
 
 
 @Component({
@@ -15,16 +13,9 @@ export class TabsPage {
 	users = UsersPage;
     profile = AccountPage;
 
-	constructor(public platform: Platform, public storage: Storage) {
+	constructor() {
     }
 
 	ionViewDidLoad() {
-        this.platform.ready().then(() => {
-            this.storage.get('hasUserEnterDetails').then((result) => {
-                if (!result) {
-                    this.storage.set('hasUserEnterDetails', true);
-                }
-            });
-        });
     }
 }

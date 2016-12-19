@@ -12,7 +12,7 @@ import { DescentPage } from '../descent/descent';
 })
 export class WelcomePage {
   // user = {username: "", profile_picture: ""};
-  // loading : any ;
+  loading : any ;
   user = {username: "", profile_picture: ""};
   constructor(
     public nav: NavController, 
@@ -20,38 +20,29 @@ export class WelcomePage {
     public userProvider: UserProvider,
     public storage:Storage,
     public loadingCtrl: LoadingController) {
-      // this.loading = this.loadingCtrl.create({ 
-      //           content: 'Getting user information...' 
-      //       });
-      // this.loading.present();
-      
+      this.loading = this.loadingCtrl.create({ 
+                content: 'Getting user information...' 
+            });
+      this.loading.present();
+      this.userProvider.getUser().then(userObservable => {
+          userObservable.subscribe(user => {
+              this.user = user;
+              this.loading.dismiss();
+              setTimeout(() => {
+                this.nav.setRoot(DescentPage);
+              }, 3000);
+          });
+          
+      });
       
     }
 
   ngOnInit() {
-    // this.userProvider.getUser().then(userObservable => {
-    //       userObservable.subscribe(user => {
-    //           this.user = user;
-    //           
-    //           // setTimeout(() => {
-    //           //   this.nav.push(DescentPage);
-    //           // }, 5000);
-    //       });
-    //   });
+    
     
   };
   ionViewDidLoad() {
-    this.storage.get('username').then(username => {
-        this.user.username = username;
-      });
-      this.storage.get('profile_picture').then(picture => {
-        this.user.profile_picture = picture.data.url;
-        // this.loading.dismiss();
-      });
+    
   }
-
-  goToProfile(): void {
-    this.nav.setRoot(DescentPage);
-  }
-
+ 
 }

@@ -10,12 +10,13 @@ import { EditProfilePage } from '../edit-profile/edit-profile';
 import { LoginPage } from '../login/login';
 
 @Component({
+    selector: 'page-account',
     templateUrl: 'account.html'
 })
 export class AccountPage {
     profilePage;
     rootNav;
-    user = {username: "", profile_picture: "", aboutMe: "", descent: "", areas: [], church: "", education: "", location: ""};
+    user = {username: "", profile_picture: "", aboutMe: "", descent: "", areas: [], church: "", education: "", location: "", images: []};
     constructor(
         public nav: NavController, 
         public auth: AuthProvider, 

@@ -12,10 +12,6 @@ import { ChurchPage } from '../pages/church/church';
 import { AboutMePage } from '../pages/about-me/about-me';
 import { EditProfilePage } from '../pages/edit-profile/edit-profile';
 
-
-
-
-
 import { AuthProvider } from '../providers/auth-provider/auth-provider';
 import { Storage } from '@ionic/storage';
 import firebase from 'firebase';
@@ -25,10 +21,9 @@ import firebase from 'firebase';
 })
 export class MyApp {
   rootPage:any;
-
   constructor(
     platform: Platform, 
-    public af: AngularFire, 
+    public af: AngularFire,
     public authProvider:AuthProvider, 
     public storage: Storage) {
     // firebase.initializeApp({
@@ -47,23 +42,27 @@ export class MyApp {
   }
 
   intialize() {
-    let hasUserEnterDetails;
-
-    this.storage.get('hasUserEnterDetails').then((result) => {
-        if (result == true) {
-          hasUserEnterDetails = true;
-        }else {
-          hasUserEnterDetails = false;
-        }
+    // this.storage.get('hasUserEnterDetails').then((result) => {
+    //     if (result == true) {
+    //       this.hasUserEnterDetails = true;
+    //     }else {
+    //       this.hasUserEnterDetails = false;
+    //     }
+      //   this.af.auth.subscribe(auth => {
+      //   if(auth && this.hasUserEnterDetails == false) {
+      //       this.rootPage = WelcomePage;
+      //     } else if(auth && this.hasUserEnterDetails == true) {
+      //       this.rootPage = TabsPage;
+      //     }else{
+      //       this.rootPage = LoginPage;
+      //     }
+      // });
         this.af.auth.subscribe(auth => {
-        if(auth && hasUserEnterDetails == false) {
-            this.rootPage = WelcomePage;
-          } else if(auth && hasUserEnterDetails == true) {
+        if(auth) {
             this.rootPage = TabsPage;
           }else{
             this.rootPage = LoginPage;
           }
       });
-    });
   }
 }

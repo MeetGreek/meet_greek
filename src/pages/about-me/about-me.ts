@@ -31,6 +31,7 @@ export class AboutMePage {
   }
 
    next(): void {
+    this.storage.set('hasUserEnterDetails', true);
     this.storage.set('aboutMe', this.aboutMeText);
     this.writeUserData();
     this.nav.setRoot(TabsPage);

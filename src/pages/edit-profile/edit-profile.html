@@ -8,12 +8,22 @@
 
   <ion-navbar>
     <ion-title>Edit Profile</ion-title>
-    <ion-buttons end> <button ion-button (click)="done()">Done</button> </ion-buttons>
+    <ion-buttons end> <button *ngIf="!maxPhotos" ion-button (click)="takePhoto2()">Done</button> </ion-buttons>
   </ion-navbar>
 
 </ion-header>
 
 
-<ion-content padding>
+<ion-content>
+  <ion-list>
+    <ion-item-sliding *ngFor="let photo of photos">
+      <ion-item>
+        <img [src]="photo.image" />
+        <ion-badge item-right light>0 days ago</ion-badge>
+      </ion-item>
+      <ion-item-options>
+        <button ion-button icon-only light (click)="removePhoto(photo)"><ion-icon name="trash"></ion-icon></button> </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
 
 </ion-content>

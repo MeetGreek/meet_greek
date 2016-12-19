@@ -32,13 +32,7 @@ export class LoginPage {
             this.loading = this.loadingCtrl.create({
                 content: 'Authenticating...' 
             });
-            this.storage.get('hasUserEnterDetails').then((result) => {
-                if (result == true) {
-                    this.hasUserEnterDetails = true;
-                }else {
-                    this.hasUserEnterDetails = false;
-                }
-            });
+            
     }
 
     ionViewDidLoad() {
@@ -49,7 +43,14 @@ export class LoginPage {
                     this.nav.setRoot(IntroPage);
                 }
             });
-        });
+            this.storage.get('hasUserEnterDetails').then((result) => {
+                if (result == true) {
+                    this.hasUserEnterDetails = true;
+                }else {
+                    this.hasUserEnterDetails = false;
+                }
+            });
+        });   
     }
 
 
@@ -58,13 +59,14 @@ export class LoginPage {
             email: new FormControl("", [Validators.required, validateEmail]),
             password: new FormControl("", Validators.required)
         });
+        
     }
 
     signin() {
         this.auth.signin(this.loginForm.value)
             .then((data) => {
                 this.storage.set('uid', data.uid);
-                this.nav.push(TabsPage);
+                this.nav.setRoot(TabsPage);
             }, (error) => {
                 let alert = this.util.doAlert("Error", error.message, "Ok");
                 alert.present();
@@ -166,12 +168,15 @@ export class LoginPage {
         let userName;
         let userEmail;
         let userProfilePicture;
+        let userImages = [];
 
         this.storage.get('email').then(email => {
             userEmail = email;
         });
         this.storage.get('profile_picture').then(profile_picture => {
             userProfilePicture = profile_picture.data.url;
+            userImages.push(profile_picture.data.url);
+            this.storage.set('images', userImages);
         });
         this.storage.get('username').then(username => {
             userName = username;
@@ -182,13 +187,15 @@ export class LoginPage {
                 currentUserRef.update({
                     email: userEmail,
                     username: userName,
-                    profile_picture: userProfilePicture
+                    profile_picture: userProfilePicture,
+                    images: userImages
                 });
             } else {
                 currentUserRef.set({
                     email: userEmail,
                     username: userName,
-                    profile_picture: userProfilePicture
+                    profile_picture: userProfilePicture,
+                    images: userImages
                 });
             }
         });

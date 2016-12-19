@@ -3,6 +3,7 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { AngularFireModule, AuthProviders, AuthMethods } from 'angularfire2';
 import { MyApp } from './app.component';
+import { SimpleAlert } from '../providers/simple-alert';
 import { TabsPage } from '../pages/tabs/tabs';
 import { LoginPage } from '../pages/login/login';
 import { UsersPage } from '../pages/users/users';
@@ -22,6 +23,7 @@ import { AuthProvider } from '../providers/auth-provider/auth-provider';
 import { ChatsProvider } from '../providers/chats-provider/chats-provider';
 import { UserProvider } from '../providers/user-provider/user-provider';
 import { UtilProvider } from '../providers/utils';
+import { Data } from '../providers/data';
 
 export const firebaseConfig = {
   apiKey: "AIzaSyCPws3I2YmCW-kGvadQYlgm9JypziF6Z14",
@@ -75,6 +77,6 @@ export const firebaseConfig = {
     EditProfilePage
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler},
-  AuthProvider, ChatsProvider, UserProvider, UtilProvider, Storage]
+  AuthProvider, ChatsProvider, UserProvider, UtilProvider, Storage, SimpleAlert, Data]
 })
 export class AppModule {}

@@ -22,7 +22,7 @@
     <div [ngSwitch]="profilePage">
         <ion-list *ngSwitchCase="'profile'">
             <ion-item>
-                 <ion-card>
+                <ion-card>
                     <img *ngIf="!user.profile_picture" src="assets/images/default.jpg" />
                     <img *ngIf="user.profile_picture" src="{{user.profile_picture}}" />
                 </ion-card>
@@ -46,9 +46,19 @@
                 {{user.church}}
             </ion-item>
         </ion-list>
-        
+
         <!--Settings Segment-->
         <ion-list *ngSwitchCase="'settings'">
+            <ion-row wrap>
+                <ion-col width-33 *ngFor="let file_uri of user.images">
+                    <ion-card>
+                        <img [src]="file_uri">
+                        <!--<ion-fab>
+                            <button ion-fab color="danger" mini class="mini-fab" (click)="showImage(file_uri)"><ion-icon name="remove"></ion-icon></button>
+                        </ion-fab>-->
+                    </ion-card>
+                </ion-col>
+            </ion-row>
             <ion-item>
                 <a ion-item primary (click)="logout()">Logout</a>
             </ion-item>
