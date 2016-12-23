@@ -44,10 +44,10 @@ export class LoginPage {
                 }
             });
             this.storage.get('hasUserEnterDetails').then((result) => {
-                if (result == true) {
-                    this.hasUserEnterDetails = true;
-                }else {
+                if (!result) {
                     this.hasUserEnterDetails = false;
+                }else {
+                    this.hasUserEnterDetails = true;
                 }
             });
         });   
@@ -142,7 +142,7 @@ export class LoginPage {
                 this.loading.dismiss();
                 if(this.hasUserEnterDetails == true){
                     this.nav.setRoot(TabsPage);
-                }else{
+                }else if (this.hasUserEnterDetails == false){
                     this.nav.setRoot(WelcomePage);
                 }
                 
@@ -175,8 +175,17 @@ export class LoginPage {
         });
         this.storage.get('profile_picture').then(profile_picture => {
             userProfilePicture = profile_picture.data.url;
-            userImages.push(profile_picture.data.url);
-            this.storage.set('images', userImages);
+            // this.storage.get('images').then(photos => {
+            //     if(photos){
+            //         for (let photo of photos) {
+            //             userImages.push(photo);
+            //         }
+            //     this.storage.set('images', userImages);
+            //     }else {
+            //         userImages.push(profile_picture.data.url);
+            //         this.storage.set('images', userImages);
+            //     }
+            // });
         });
         this.storage.get('username').then(username => {
             userName = username;
@@ -187,15 +196,15 @@ export class LoginPage {
                 currentUserRef.update({
                     email: userEmail,
                     username: userName,
-                    profile_picture: userProfilePicture,
-                    images: userImages
+                    profile_picture: userProfilePicture
+                    // images: userImages
                 });
             } else {
                 currentUserRef.set({
                     email: userEmail,
                     username: userName,
-                    profile_picture: userProfilePicture,
-                    images: userImages
+                    profile_picture: userProfilePicture
+                    // images: userImages
                 });
             }
         });

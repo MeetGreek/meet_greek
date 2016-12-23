@@ -1,4 +1,7 @@
 .chat-view {
+  .fixed-header {
+    position: fixed;
+  }
   .messages {
     width: 100%;
     position: absolute;
@@ -19,4 +22,10 @@
       text-align: right;
     }
   }
+//   .input-cover {
+//   position: static;
+// }
+//   .scroll-content {
+//   padding-bottom:0!important;
+// }
 }

@@ -5,25 +5,28 @@
   Ionic pages and navigation.
 -->
 <ion-header>
-
   <ion-navbar>
     <ion-title>Edit Profile</ion-title>
-    <ion-buttons end> <button *ngIf="!maxPhotos" ion-button (click)="takePhoto2()">Done</button> </ion-buttons>
+    <ion-buttons end> <button ion-button (click)="done()">Done</button> </ion-buttons>
   </ion-navbar>
-
 </ion-header>
-
-
 <ion-content>
-  <ion-list>
-    <ion-item-sliding *ngFor="let photo of photos">
-      <ion-item>
-        <img [src]="photo.image" />
-        <ion-badge item-right light>0 days ago</ion-badge>
-      </ion-item>
-      <ion-item-options>
-        <button ion-button icon-only light (click)="removePhoto(photo)"><ion-icon name="trash"></ion-icon></button> </ion-item-options>
-    </ion-item-sliding>
-  </ion-list>
-
+  <ion-row wrap>
+    <ion-col width-33 *ngFor="let file_uri of user.images">
+      <ion-card>
+        <img [src]="file_uri" class="image-gallery">
+        <ion-fab>
+          <button ion-fab color="danger" mini class="mini-fab" (click)="deleteImage(file_uri)"><ion-icon name="remove"></ion-icon></button>
+        </ion-fab>
+      </ion-card>
+    </ion-col>
+    <ion-col width-33 *ngIf="!maxPhotos">
+      <ion-card>
+        <img src="http://orig06.deviantart.net/583f/f/2012/027/b/6/fondo_png_500x500_by_puppyeditions-d4ntlgx.png">
+        <ion-fab class="add-fab">
+          <button ion-fab color="vibrant" mini class="mini-fab add-fab" (click)="takePhoto2()"><ion-icon name="add"></ion-icon></button>
+        </ion-fab>
+      </ion-card>
+    </ion-col>
+  </ion-row>
 </ion-content>

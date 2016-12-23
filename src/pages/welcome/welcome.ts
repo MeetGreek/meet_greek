@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, LoadingController } from 'ionic-angular';
+import { NavController, LoadingController, Platform } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { AuthProvider } from '../../providers/auth-provider/auth-provider';
 import { UserProvider } from '../../providers/user-provider/user-provider';
@@ -19,6 +19,7 @@ export class WelcomePage {
     public auth: AuthProvider, 
     public userProvider: UserProvider,
     public storage:Storage,
+    public platform: Platform,
     public loadingCtrl: LoadingController) {
       this.loading = this.loadingCtrl.create({ 
                 content: 'Getting user information...' 
@@ -28,21 +29,22 @@ export class WelcomePage {
           userObservable.subscribe(user => {
               this.user = user;
               this.loading.dismiss();
-              setTimeout(() => {
-                this.nav.setRoot(DescentPage);
-              }, 3000);
           });
-          
       });
-      
     }
 
   ngOnInit() {
-    
-    
+    this.platform.ready().then(() => {
+      this.storage.get('hasUserEnterDetails').then((result) => {
+          if (!result) {
+              setTimeout(() => {
+                this.nav.setRoot(DescentPage);
+              }, 8000);
+          }
+      });
+    });
   };
   ionViewDidLoad() {
     
   }
- 
 }

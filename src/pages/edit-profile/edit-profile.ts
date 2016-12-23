@@ -8,6 +8,9 @@ import firebase from 'firebase'
 import { AngularFire } from 'angularfire2';
 import { UserProvider } from '../../providers/user-provider/user-provider';
 import { Storage } from '@ionic/storage';
+import { TabsPage } from '../tabs/tabs';
+import { AccountPage } from '../account/account';
+
 /*
   Generated class for the EditProfile page.
 
@@ -29,6 +32,8 @@ export class EditProfilePage {
   userPhotos = [];
   test = [];
   maxPhotos = false;
+  user = {username: "", profile_picture: "", aboutMe: "", descent: "", areas: [], church: "", education: "", location: "", images: []};
+  
   constructor(
     public userProvider: UserProvider,
     public af: AngularFire, 
@@ -38,7 +43,15 @@ export class EditProfilePage {
     public simpleAlert: SimpleAlert, 
     public modalCtrl: ModalController, 
     public alertCtrl: AlertController,
-    public storage: Storage) { }
+    public storage: Storage) {
+      this.checkPhotos();
+      this.userProvider.getUser().then(userObservable => {
+            userObservable.subscribe(user => {
+                this.user = user;
+                this.loaded = true;
+            });
+        });
+     }
 
   ionViewDidLoad() {
     // Uncomment to use test data 
@@ -49,7 +62,7 @@ export class EditProfilePage {
       ]*/
 
     this.platform.ready().then(() => {
-      this.loadPhotos();
+      // this.loadPhotos();
     });
   }
 
@@ -123,13 +136,16 @@ export class EditProfilePage {
   }
 
   takePhoto2(): void {
-    if(this.maxPhotos == false){
+    if (this.loaded) {
+      
+    
+    // if(this.maxPhotos == false){
       Camera.getPicture({
       quality : 95,
       destinationType : Camera.DestinationType.DATA_URL,
       sourceType : Camera.PictureSourceType.CAMERA,
       allowEdit : true,
-      encodingType: Camera.EncodingType.PNG,
+      encodingType: Camera.EncodingType.JPEG,
       targetWidth: 500,
       targetHeight: 500,
       saveToPhotoAlbum: true
@@ -138,8 +154,36 @@ export class EditProfilePage {
       }, error => {
         console.log("ERROR -> " + JSON.stringify(error));
       });
-    }
     
+    }
+  }
+
+  deleteImage(photo): void {
+    var storage = firebase.storage();
+    var httpsReference = storage.refFromURL(photo);
+    let photosLeft = [];
+    photosLeft.length = 0;
+    
+
+    httpsReference.delete().then(function() {
+      // File deleted successfully
+      
+    }).catch(function(error) {
+      // Uh-oh, an error occurred!
+    });
+
+    this.storage.get('images').then(photos => {
+        for (let ph of photos) {
+          
+          if(ph != photo) {
+            photosLeft.push(ph);
+            
+          }
+        }
+        this.storage.set('images', photosLeft);
+        this.writeUserData();
+    });
+      
   }
 
   removePhoto(photo): void {
@@ -147,9 +191,9 @@ export class EditProfilePage {
     let index = this.photos.indexOf(photo);
     if (index > -1) {
       this.photos.splice(index, 1);
-      this.save();
     }
   }
+
 
   sharePhoto(image): void {
 
@@ -161,27 +205,39 @@ export class EditProfilePage {
 
 uploadPicture(newFile){
   let d = new Date(),
-          n = d.getTime(),
-          newFileName = n + ".png";
+      n = d.getTime(),
+      newFileName = n + ".jpeg";
 
-  this.storageRef.child('images/' + newFileName).putString(newFile, 'base64', {contentType: 'image/png'}).then((savedPicture) => {
-    this.storage.get('images').then(photos => {
-      for (let photo of photos) {
-        this.userPhotos.push(photo);
-      }
-      this.userPhotos.push(savedPicture.downloadURL);
-      this.storage.set('images', this.userPhotos);
-      this.writeUserData();
+  this.userProvider.getUid().then(uid => {
+    this.userPhotos.length = 0;
+    this.storageRef.child('images/'+ uid + '/' + newFileName).putString(newFile, 'base64', {contentType: 'image/jpeg'}).then((savedPicture) => {
+      this.storage.get('images').then(photos => {
+        if(!photos){
+          this.userPhotos.push(savedPicture.downloadURL);
+        }else {
+          for (let photo of photos) {
+            this.userPhotos.push(photo);
+          }
+          this.userPhotos.push(savedPicture.downloadURL);
+        }
+        this.storage.set('images', this.userPhotos);
+        this.writeUserData();
+      });
     });
-  });        
+  });
 }
 
 writeUserData(): void {
-    this.checkPhotos();
+    if(!this.maxPhotos){
+      this.checkPhotos();
+    }
     let photosChosen = [];
-      
+    photosChosen.length = 0;
     this.storage.get('images').then(photo => {
-      photosChosen = photo;
+      for (let ph of photo) {
+            photosChosen.push(ph);
+          }
+         
     });
 
     this.userProvider.getUid().then(uid => {
@@ -190,16 +246,27 @@ writeUserData(): void {
           currentUserRef.update({
               images: photosChosen
         });
-      } 
+      }
+      if(this.maxPhotos){
+         this.checkPhotos();
+      }
     });
+    
   }
 
   checkPhotos(): void {
     this.storage.get('images').then(photo => {
       if (photo.length == 6){
         this.maxPhotos = true;
+      }else {
+        this.maxPhotos = false;
       }
+      
     });
+  }
+
+  done(): void{
+    this.navCtrl.setRoot(AccountPage);
   }
 //   // File or Blob named mountains.jpg
 // file = 

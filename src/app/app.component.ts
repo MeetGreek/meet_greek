@@ -15,6 +15,7 @@ import { EditProfilePage } from '../pages/edit-profile/edit-profile';
 import { AuthProvider } from '../providers/auth-provider/auth-provider';
 import { Storage } from '@ionic/storage';
 import firebase from 'firebase';
+import { Keyboard } from 'ionic-native';
 
 @Component({
   templateUrl: 'app.html'
@@ -37,6 +38,10 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       StatusBar.styleDefault();
       Splashscreen.hide();
+      if (platform.is('ios')) {
+                //Keyboard.disableScroll(true);
+                //Keyboard.shrinkView(true);
+            }
       this.intialize();
     });
   }

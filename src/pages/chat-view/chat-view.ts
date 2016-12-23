@@ -1,8 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, NavParams, Content } from 'ionic-angular';
+import { NavController, NavParams, Content, Platform } from 'ionic-angular';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
 import { ChatsProvider } from '../../providers/chats-provider/chats-provider';
 import { UserProvider } from '../../providers/user-provider/user-provider';
+
 
 @Component({
   templateUrl: 'chat-view.html',
@@ -17,7 +18,8 @@ export class ChatViewPage {
   params:NavParams, 
   public chatsProvider:ChatsProvider, 
   public af:AngularFire, 
-  public userProvider:UserProvider) {
+  public userProvider:UserProvider,
+  public platform: Platform) {
     
     this.uid = params.data.uid;
     this.interlocutor = params.data.interlocutor;
@@ -30,8 +32,17 @@ export class ChatViewPage {
   }
 
   ionViewDidEnter() {
+    // this.platform.ready().then(() => {
+    //   Keyboard.disableScroll(true);
+    // });
     this.content.scrollToBottom();
-  }
+}
+
+ionViewWillLeave() {
+    // this.platform.ready().then(() => {
+    //   Keyboard.disableScroll(false);
+    // });
+}
 
 
   sendMessage() {
