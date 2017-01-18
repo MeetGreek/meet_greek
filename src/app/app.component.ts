@@ -11,6 +11,9 @@ import { AreasPage } from '../pages/areas/areas';
 import { ChurchPage } from '../pages/church/church';
 import { AboutMePage } from '../pages/about-me/about-me';
 import { EditProfilePage } from '../pages/edit-profile/edit-profile';
+import { PremiumPage } from '../pages/premium/premium';
+import { LegalPage } from '../pages/legal/legal';
+import { FeedbackPage } from '../pages/feedback/feedback';
 
 import { AuthProvider } from '../providers/auth-provider/auth-provider';
 import { Storage } from '@ionic/storage';
@@ -37,8 +40,10 @@ export class MyApp {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       StatusBar.styleDefault();
+      StatusBar.backgroundColorByHexString('#ffffff'); // set status bar to white
       Splashscreen.hide();
       if (platform.is('ios')) {
+                  Keyboard.hideKeyboardAccessoryBar(false)
                 //Keyboard.disableScroll(true);
                 //Keyboard.shrinkView(true);
             }

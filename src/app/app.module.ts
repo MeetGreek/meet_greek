@@ -17,6 +17,9 @@ import { AreasPage } from '../pages/areas/areas';
 import { ChurchPage } from '../pages/church/church';
 import { AboutMePage } from '../pages/about-me/about-me';
 import { EditProfilePage } from '../pages/edit-profile/edit-profile';
+import { PremiumPage } from '../pages/premium/premium';
+import { LegalPage } from '../pages/legal/legal';
+import { FeedbackPage } from '../pages/feedback/feedback';
 
 
 import { AuthProvider } from '../providers/auth-provider/auth-provider';
@@ -53,7 +56,10 @@ export const firebaseConfig = {
     AreasPage,
     ChurchPage,
     AboutMePage,
-    EditProfilePage
+    EditProfilePage,
+    PremiumPage,
+    LegalPage,
+    FeedbackPage
   ],
   imports: [
     IonicModule.forRoot(MyApp,
@@ -85,7 +91,10 @@ export const firebaseConfig = {
     AreasPage,
     ChurchPage,
     AboutMePage,
-    EditProfilePage
+    EditProfilePage,
+    PremiumPage,
+    LegalPage,
+    FeedbackPage
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler},
   AuthProvider, ChatsProvider, UserProvider, UtilProvider, Storage, SimpleAlert, Data]

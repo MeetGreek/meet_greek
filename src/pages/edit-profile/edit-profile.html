@@ -16,7 +16,7 @@
       <ion-card>
         <img [src]="file_uri" class="image-gallery">
         <ion-fab>
-          <button ion-fab color="danger" mini class="mini-fab" (click)="deleteImage(file_uri)"><ion-icon name="remove"></ion-icon></button>
+          <button ion-fab color="danger" mini class="mini-fab" (click)="presentActionSheet(file_uri)"><ion-icon name="remove"></ion-icon></button>
         </ion-fab>
       </ion-card>
     </ion-col>
@@ -24,9 +24,53 @@
       <ion-card>
         <img src="http://orig06.deviantart.net/583f/f/2012/027/b/6/fondo_png_500x500_by_puppyeditions-d4ntlgx.png">
         <ion-fab class="add-fab">
-          <button ion-fab color="vibrant" mini class="mini-fab add-fab" (click)="takePhoto2()"><ion-icon name="add"></ion-icon></button>
+          <button ion-fab color="vibrant" mini class="mini-fab add-fab" (click)="cameraActionSheet()"><ion-icon name="add"></ion-icon></button>
         </ion-fab>
       </ion-card>
     </ion-col>
   </ion-row>
+  <ion-card>
+    <ion-card-header>
+      About me
+    </ion-card-header>
+    <ion-card-content>
+      <ion-textarea [(ngModel)]="msg"></ion-textarea>
+    </ion-card-content>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      Gender
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list radio-group [(ngModel)]="gender">
+        <ion-grid>
+          <ion-row>
+            <ion-col width-50>
+              <ion-item>
+                <ion-label>Male</ion-label>
+                <ion-radio value="Male" checked></ion-radio>
+              </ion-item>
+            </ion-col>
+            <ion-col width-50>
+              <ion-item>
+                <ion-label>Female</ion-label>
+                <ion-radio value="Female"></ion-radio>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+  <ion-grid>
+    <ion-row>
+      <ion-col offset-10 width-80><button ion-button (click)="showDescent()" full color="light">Greek Descent</button></ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col offset-10 width-80><button ion-button (click)="showAreas()" full color="light">Greek Location</button></ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col offset-25 width-50><button ion-button (click)="updateFacebook()" full>Update from Facebook</button></ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

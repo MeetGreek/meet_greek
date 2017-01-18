@@ -25,7 +25,7 @@
       
       <ion-col width-70 [hidden]="!chats">
           <ion-input type="text"  placeholder="Enter Message"
-              [(ngModel)]="message">
+              [(ngModel)]="message" autocomplete="on" autocorrect="on" spellcheck="true">
           </ion-input>
       </ion-col>
       <ion-col width-20 [hidden]="!chats">

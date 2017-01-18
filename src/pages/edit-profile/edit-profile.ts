@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, AlertController, Platform, ModalController } from 'ionic-angular';
+import { NavController, AlertController, Platform, ModalController, ActionSheetController, ToastController, LoadingController } from 'ionic-angular';
 import { PhotoModel } from '../../models/photo-model';
 import { SimpleAlert } from '../../providers/simple-alert';
 import { Camera, File } from 'ionic-native';
@@ -10,6 +10,8 @@ import { UserProvider } from '../../providers/user-provider/user-provider';
 import { Storage } from '@ionic/storage';
 import { TabsPage } from '../tabs/tabs';
 import { AccountPage } from '../account/account';
+import { Facebook } from 'ionic-native';
+import { UtilProvider } from '../../providers/utils';
 
 /*
   Generated class for the EditProfile page.
@@ -32,7 +34,14 @@ export class EditProfilePage {
   userPhotos = [];
   test = [];
   maxPhotos = false;
-  user = {username: "", profile_picture: "", aboutMe: "", descent: "", areas: [], church: "", education: "", location: "", images: []};
+  msg: string;
+  gender: any;
+  isYes = false;
+  isFather = false;
+  isMother = false;
+  isNo = false;
+  loading : any ;
+  user = {username: "", profile_picture: "", aboutMe: "", descent: "", areas: [], church: "", education: "", location: "", gender: "", images: []};
   
   constructor(
     public userProvider: UserProvider,
@@ -43,12 +52,18 @@ export class EditProfilePage {
     public simpleAlert: SimpleAlert, 
     public modalCtrl: ModalController, 
     public alertCtrl: AlertController,
-    public storage: Storage) {
+    public storage: Storage,
+    public actionSheetCtrl: ActionSheetController,
+    public toastCtrl: ToastController,
+    public util: UtilProvider,
+    public loadingCtrl: LoadingController) {
       this.checkPhotos();
       this.userProvider.getUser().then(userObservable => {
             userObservable.subscribe(user => {
                 this.user = user;
                 this.loaded = true;
+                this.msg = user.aboutMe;
+                this.gender = this.user.gender;
             });
         });
      }
@@ -64,6 +79,53 @@ export class EditProfilePage {
     this.platform.ready().then(() => {
       // this.loadPhotos();
     });
+  }
+
+  presentActionSheet(file_uri) {
+    let actionSheet = this.actionSheetCtrl.create({
+      title: 'Edit gallery',
+      buttons: [
+        {
+          text: 'Delete',
+          role: 'destructive',
+          handler: () => {
+            this.deleteImage(file_uri);
+          }
+        },{
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            
+          }
+        }
+      ]
+    });
+    actionSheet.present();
+  }
+
+  cameraActionSheet(){
+    let cameraSheet = this.actionSheetCtrl.create({
+      title: 'Add picture',
+      buttons: [
+        {
+          text: 'From Camera',
+          handler: () => {
+            this.takePhoto2();
+          }
+        },{
+          text: 'From Gallery',
+          handler: () => {
+            this.takePhoto3();
+          }
+        },{
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+          }
+        }
+      ]
+    });
+    cameraSheet.present();
   }
 
   loadPhotos(): void {
@@ -144,6 +206,29 @@ export class EditProfilePage {
       quality : 95,
       destinationType : Camera.DestinationType.DATA_URL,
       sourceType : Camera.PictureSourceType.CAMERA,
+      allowEdit : true,
+      encodingType: Camera.EncodingType.JPEG,
+      targetWidth: 500,
+      targetHeight: 500,
+      saveToPhotoAlbum: true
+      }).then(imageData => {
+        this.uploadPicture(imageData)
+      }, error => {
+        console.log("ERROR -> " + JSON.stringify(error));
+      });
+    
+    }
+  }
+
+  takePhoto3(): void {
+    if (this.loaded) {
+      
+    
+    // if(this.maxPhotos == false){
+      Camera.getPicture({
+      quality : 95,
+      destinationType : Camera.DestinationType.DATA_URL,
+      sourceType : Camera.PictureSourceType.PHOTOLIBRARY,
       allowEdit : true,
       encodingType: Camera.EncodingType.JPEG,
       targetWidth: 500,
@@ -266,8 +351,327 @@ writeUserData(): void {
   }
 
   done(): void{
-    this.navCtrl.setRoot(AccountPage);
+    if(this.user.gender != undefined || this.user.gender != ""){
+      this.user.aboutMe = this.msg;
+
+      this.storage.set('descent', this.user.descent);
+      this.storage.set('areas', this.user.areas);
+      this.storage.set('gender', this.gender);
+      this.storage.set('aboutMe', this.user.aboutMe);
+      this.writeUserDataDone();
+      this.navCtrl.setRoot(AccountPage);
+    }else {
+      this.presentToast();
+    }
   }
+
+  writeUserDataDone(): void {
+    let userDescent;
+    this.storage.get('descent').then(descent => {
+      userDescent = descent;
+    });
+
+    let areasChosen;
+    this.storage.get('areas').then(areas => {
+      areasChosen = areas;
+    });
+
+    let userGender;
+    this.storage.get('gender').then(gender => {
+      userGender = gender;
+    });
+
+    let userAboutMe;
+    this.storage.get('aboutMe').then(aboutMe => {
+      userAboutMe = aboutMe;
+    });
+
+    this.userProvider.getUid().then(uid => {
+      let currentUserRef = this.af.database.object(`/users/${uid}`);
+      if (currentUserRef) {
+          currentUserRef.update({
+              descent: userDescent,
+              areas: areasChosen,
+              gender: userGender,
+              aboutMe: userAboutMe
+        });
+      } 
+    });
+  }
+
+  presentToast() {
+    let toast = this.toastCtrl.create({
+      message: 'Need more info!',
+      cssClass: "toast-success",
+      duration: 2000,
+      position: 'middle'
+    });
+    toast.present();
+  }
+
+  showDescent(): void {
+    this.checkPreviousDescent();
+    let alert = this.alertCtrl.create();
+    alert.setTitle('Are you of Greek Descent?');
+
+    alert.addInput({
+      type: 'radio',
+      label: 'Yes',
+      value: 'Yes',
+      checked: true ? this.isYes : false
+    });
+
+    alert.addInput({
+      type: 'radio',
+      label: 'Yes, Mother’s Side',
+      value: 'Yes, Mother’s Side',
+      checked: true ? this.isMother : false
+    });
+
+    alert.addInput({
+      type: 'radio',
+      label: 'Yes, Father’s Side',
+      value: 'Yes, Father’s Side',
+      checked: true ? this.isFather : false
+    });
+
+    alert.addInput({
+      type: 'radio',
+      label: 'No, just here for the lamb',
+      value: 'No, just here for the lamb',
+      checked: true ? this.isNo : false
+    });
+
+    alert.addButton('Cancel');
+    alert.addButton({
+      text: 'Okay',
+      handler: data => {
+        this.user.descent = data;
+      }
+    });
+    alert.present();
+  }
+
+  checkPreviousDescent(): void {
+    if(this.user.descent == "Yes"){
+      this.isYes = true;
+      this.isMother = false;
+      this.isFather = false;
+      this.isNo = false;
+    }else if (this.user.descent == "Yes, Mother’s Side"){
+      this.isYes = false;
+      this.isMother = true;
+      this.isFather = false;
+      this.isNo = false;
+    }else if (this.user.descent == "Yes, Father’s Side"){
+      this.isYes = false;
+      this.isMother = false;
+      this.isFather = true;
+      this.isNo = false;
+    }else if (this.user.descent == "No, just here for the lamb") {
+      this.isYes = false;
+      this.isMother = false;
+      this.isFather = false;
+      this.isNo = true;
+    }
+  }
+
+  showAreas() {
+    let alert = this.alertCtrl.create();
+    alert.setTitle('Select the areas where your family comes from, if you wish.');
+
+    alert.addInput({
+      type: 'checkbox',
+      label: 'Central Greece',
+      value: 'Central Greece',
+      checked: true ? (this.user.areas).indexOf('Central Greece') >= 0 : false
+    });
+
+    alert.addInput({
+      type: 'checkbox',
+      label: 'Thessalia',
+      value: 'Thessalia',
+      checked: true ? (this.user.areas).indexOf('Thessalia') >= 0 : false
+    });
+
+    alert.addInput({
+      type: 'checkbox',
+      label: 'Macedonia',
+      value: 'Macedonia',
+      checked: true ? (this.user.areas).indexOf('Macedonia') >= 0 : false
+    });
+
+    alert.addInput({
+      type: 'checkbox',
+      label: 'Epirus',
+      value: 'Epirus',
+      checked: true ? (this.user.areas).indexOf('Epirus') >= 0 : false
+    });
+
+    alert.addInput({
+      type: 'checkbox',
+      label: 'Chalkidiki',
+      value: 'Chalkidiki',
+      checked: true ? (this.user.areas).indexOf('Chalkidiki') >= 0 : false
+    });
+
+    alert.addInput({
+      type: 'checkbox',
+      label: 'Thraki',
+      value: 'Thraki',
+      checked: true ? (this.user.areas).indexOf('Thraki') >= 0 : false
+    });
+
+    alert.addInput({
+      type: 'checkbox',
+      label: 'Sporades Islands',
+      value: 'Sporades Islands',
+      checked: true ? (this.user.areas).indexOf('Sporades Islands') >= 0 : false
+    });
+
+    alert.addInput({
+      type: 'checkbox',
+      label: 'NE Aegean Islands',
+      value: 'NE Aegean Islands',
+      checked: true ? (this.user.areas).indexOf('NE Aegean Islands') >= 0 : false
+    });
+
+    alert.addInput({
+      type: 'checkbox',
+      label: 'Dodecanese Islands',
+      value: 'Dodecanese Islands',
+      checked: true ? (this.user.areas).indexOf('Dodecanese Islands') >= 0 : false
+    });
+
+    alert.addInput({
+      type: 'checkbox',
+      label: 'Cyclades Islands',
+      value: 'Cyclades Islands',
+      checked: true ? (this.user.areas).indexOf('Cyclades Islands') >= 0 : false
+    });
+
+    alert.addInput({
+      type: 'checkbox',
+      label: 'Crete Island',
+      value: 'Crete Island',
+      checked: true ? (this.user.areas).indexOf('Crete Island') >= 0 : false
+    });
+
+    alert.addInput({
+      type: 'checkbox',
+      label: 'Saronic Islands',
+      value: 'Saronic Islands',
+      checked: true ? (this.user.areas).indexOf('Saronic Islands') >= 0 : false
+    });
+    alert.addInput({
+      type: 'checkbox',
+      label: 'Peloponnese',
+      value: 'Peloponnese',
+      checked: true ? (this.user.areas).indexOf('Peloponnese') >= 0 : false
+    });
+    alert.addInput({
+      type: 'checkbox',
+      label: 'Ionian Islands',
+      value: 'Ionian Islands',
+      checked: true ? (this.user.areas).indexOf('Ionian Islands') >= 0 : false
+    });
+
+    alert.addButton('Cancel');
+    alert.addButton({
+      text: 'Okay',
+      handler: data => {
+        this.user.areas = data;
+      }
+    });
+    alert.present();
+  }
+
+  updateFacebook(): void {
+    this.loading = this.loadingCtrl.create({
+                content: 'Updating Profile from Facebook...' 
+            });
+            this.loading.present();
+        Facebook.api('/me?fields=id,name,picture.width(500).height(500),email', ['public_profile']).then(
+            (response) => {
+                this.storage.set('username', response.name);
+                this.storage.set('profile_picture', response.picture);
+                this.storage.set('email', response.email);
+                // let alert1 = this.util.doAlert("Error respone", this.storage.get('username'), "Ok");
+                // alert1.present();
+
+                this.updateUserData(response);
+
+                //THIS CHECK
+                var user = firebase.auth().currentUser;
+                user.updateProfile({
+                    displayName: response.name,
+                    photoURL: response.picture.data.url
+                }).then(function () {
+                    let alert = this.util.doAlert("Error user", user.displayName, "Ok");
+                    alert.present();
+                }, function (error) {
+                    // An error happened.
+                });
+
+                // this.menu.enable(true);
+                this.loading.dismiss();
+                
+                
+                // this.nav.setRoot(WelcomePage);
+
+            },
+
+            (err) => {
+                console.log(err);
+                // let alert = this.doAlert.create({
+                //   title: 'Oops!',
+                //   subTitle: 'Something went wrong, please try again later.',
+                //   buttons: ['Ok']
+                // });
+                let alert = this.util.doAlert("Error", err.message, "Ok");
+                this.loading.dismiss();
+                alert.present();
+            }
+        );
+    }
+
+    updateUserData(response): void {
+        let userName;
+        let userEmail;
+        let userProfilePicture;
+
+        this.storage.get('email').then(email => {
+            userEmail = email;
+        });
+        this.storage.get('profile_picture').then(profile_picture => {
+            userProfilePicture = profile_picture.data.url;
+            // this.storage.get('images').then(photos => {
+            //     if(photos){
+            //         for (let photo of photos) {
+            //             userImages.push(photo);
+            //         }
+            //     this.storage.set('images', userImages);
+            //     }else {
+            //         userImages.push(profile_picture.data.url);
+            //         this.storage.set('images', userImages);
+            //     }
+            // });
+        });
+        this.storage.get('username').then(username => {
+            userName = username;
+        });
+        this.userProvider.getUid().then(uid => {
+            let currentUserRef = this.af.database.object(`/users/${uid}`);
+            if (currentUserRef) {
+                currentUserRef.update({
+                    email: userEmail,
+                    username: userName,
+                    profile_picture: userProfilePicture
+                    // images: userImages
+                });
+            }
+        });
+    }
 //   // File or Blob named mountains.jpg
 // file = 
 
