@@ -27,6 +27,11 @@ export class UserProvider {
         });
     }
 
+    getUserInterlocutor(interlocutorUid) {
+        // Getting UID of Logged In User
+        return this.af.database.object(`/users/${interlocutorUid}`);
+    }
+
 
     // Get All Users of App
     getAllUsers() {

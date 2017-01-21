@@ -25,6 +25,8 @@ import { FeedbackPage } from '../pages/feedback/feedback';
 import { AuthProvider } from '../providers/auth-provider/auth-provider';
 import { ChatsProvider } from '../providers/chats-provider/chats-provider';
 import { UserProvider } from '../providers/user-provider/user-provider';
+import { PurchaseProvider } from '../providers/purchase-provider/purchase-provider';
+
 import { UtilProvider } from '../providers/utils';
 import { Data } from '../providers/data';
 
@@ -97,6 +99,6 @@ export const firebaseConfig = {
     FeedbackPage
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler},
-  AuthProvider, ChatsProvider, UserProvider, UtilProvider, Storage, SimpleAlert, Data]
+  AuthProvider, ChatsProvider, UserProvider, PurchaseProvider, UtilProvider, Storage, SimpleAlert, Data]
 })
 export class AppModule {}

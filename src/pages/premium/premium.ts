@@ -1,19 +1,14 @@
 import { Component } from '@angular/core';
 import { ViewController } from 'ionic-angular';
+import { PurchaseProvider } from '../../providers/purchase-provider/purchase-provider';
 
-/*
-  Generated class for the Premium page.
-
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
-*/
 @Component({
   selector: 'page-premium',
   templateUrl: 'premium.html'
 })
 export class PremiumPage {
   slideOptions: any; 
-  constructor(public viewCtrl: ViewController) {
+  constructor(public viewCtrl: ViewController, public purchase: PurchaseProvider) {
     this.slideOptions = { 
       pager: true 
     }; 
@@ -24,7 +19,7 @@ export class PremiumPage {
   }
 
   oneWeek(): void {
-
+    this.purchase.getProducts();
   }
 
   oneMonth(): void {
