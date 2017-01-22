@@ -9,7 +9,7 @@ import { AngularFire } from 'angularfire2';
 import { UserProvider } from '../../providers/user-provider/user-provider';
 import { Storage } from '@ionic/storage';
 import { TabsPage } from '../tabs/tabs';
-import { AccountPage } from '../account/account';
+import { SettingsPage } from '../settings/settings';
 import { Facebook } from 'ionic-native';
 import { UtilProvider } from '../../providers/utils';
 
@@ -359,7 +359,7 @@ writeUserData(): void {
       this.storage.set('gender', this.gender);
       this.storage.set('aboutMe', this.user.aboutMe);
       this.writeUserDataDone();
-      this.navCtrl.setRoot(AccountPage);
+      this.navCtrl.setRoot(SettingsPage);
     }else {
       this.presentToast();
     }

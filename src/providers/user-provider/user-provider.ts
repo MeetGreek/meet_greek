@@ -38,6 +38,10 @@ export class UserProvider {
         return this.af.database.list('/users');
     }
 
+    getAllUsersExcept() {
+        return this.af.database.list('/users');
+    }
+
     // Get base64 Picture of User
     getPicture() {
         let base64Picture;

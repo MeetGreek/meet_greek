@@ -20,7 +20,11 @@ import { EditProfilePage } from '../pages/edit-profile/edit-profile';
 import { PremiumPage } from '../pages/premium/premium';
 import { LegalPage } from '../pages/legal/legal';
 import { FeedbackPage } from '../pages/feedback/feedback';
+import { SettingsPage } from '../pages/settings/settings';
+import { MainPage } from '../pages/main/main';
+import { ExtendedProfilePage } from '../pages/extended-profile/extended-profile';
 
+import { Filter } from '../pipes/filter';
 
 import { AuthProvider } from '../providers/auth-provider/auth-provider';
 import { ChatsProvider } from '../providers/chats-provider/chats-provider';
@@ -61,7 +65,11 @@ export const firebaseConfig = {
     EditProfilePage,
     PremiumPage,
     LegalPage,
-    FeedbackPage
+    FeedbackPage,
+    MainPage,
+    SettingsPage,
+    ExtendedProfilePage,
+    Filter
   ],
   imports: [
     IonicModule.forRoot(MyApp,
@@ -96,7 +104,10 @@ export const firebaseConfig = {
     EditProfilePage,
     PremiumPage,
     LegalPage,
-    FeedbackPage
+    FeedbackPage,
+    MainPage,
+    SettingsPage,
+    ExtendedProfilePage
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler},
   AuthProvider, ChatsProvider, UserProvider, PurchaseProvider, UtilProvider, Storage, SimpleAlert, Data]

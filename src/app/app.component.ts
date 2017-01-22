@@ -14,6 +14,12 @@ import { EditProfilePage } from '../pages/edit-profile/edit-profile';
 import { PremiumPage } from '../pages/premium/premium';
 import { LegalPage } from '../pages/legal/legal';
 import { FeedbackPage } from '../pages/feedback/feedback';
+import { SettingsPage } from '../pages/settings/settings';
+import { MainPage } from '../pages/main/main';
+import { ExtendedProfilePage } from '../pages/extended-profile/extended-profile';
+
+
+
 
 import { AuthProvider } from '../providers/auth-provider/auth-provider';
 import { Storage } from '@ionic/storage';
@@ -69,7 +75,7 @@ export class MyApp {
       // });
         this.af.auth.subscribe(auth => {
         if(auth) {
-            this.rootPage = TabsPage;
+            this.rootPage = MainPage;
           }else{
             this.rootPage = LoginPage;
           }

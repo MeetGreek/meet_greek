@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController, Platform, LoadingController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
-import { TabsPage } from '../tabs/tabs';
+//import { TabsPage } from '../tabs/tabs';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { validateEmail } from '../../validators/email';
 import { AuthProvider } from '../../providers/auth-provider/auth-provider';
@@ -12,6 +12,7 @@ import { WelcomePage } from '../welcome/welcome';
 import { Facebook } from 'ionic-native';
 import firebase from 'firebase';
 import { AngularFire } from 'angularfire2';
+import { MainPage } from '../main/main';
 
 @Component({
   templateUrl: 'login.html'
@@ -66,7 +67,7 @@ export class LoginPage {
     this.auth.signin(this.loginForm.value)
       .then((data) => {
         this.storage.set('uid', data.uid);
-        this.nav.setRoot(TabsPage);
+        this.nav.setRoot(MainPage);
       }, (error) => {
         let alert = this.util.doAlert("Error", error.message, "Ok");
         alert.present();
@@ -143,7 +144,7 @@ export class LoginPage {
         // this.menu.enable(true);
         this.loading.dismiss();
         if (this.hasUserEnterDetails == true) {
-          this.nav.setRoot(TabsPage);
+          this.nav.setRoot(MainPage);
         } else if (this.hasUserEnterDetails == false) {
           let startAge = {
             lower: 18,

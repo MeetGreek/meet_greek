@@ -3,7 +3,7 @@ import { NavController } from 'ionic-angular';
 import { AngularFire } from 'angularfire2';
 import { Storage } from '@ionic/storage';
 import { UserProvider } from '../../providers/user-provider/user-provider';
-import { TabsPage } from '../tabs/tabs';
+import { MainPage } from '../main/main';
 // import { Forms } from @angular/forms
 
 @Component({
@@ -34,7 +34,7 @@ export class AboutMePage {
     this.storage.set('hasUserEnterDetails', true);
     this.storage.set('aboutMe', this.aboutMeText);
     this.writeUserData();
-    this.nav.setRoot(TabsPage);
+    this.nav.setRoot(MainPage);
   }
 
   writeUserData(): void {

@@ -11,8 +11,6 @@ import { LegalPage } from '../legal/legal';
 import { FeedbackPage } from '../feedback/feedback';
 import { AngularFire } from 'angularfire2';
 
-
-
 import { LoginPage } from '../login/login';
 
 @Component({
