@@ -22,16 +22,21 @@ export class MainPage {
   sliderEnded = false;
   premium = true;
   greeksFound = true;
+  buttonsVisible = false;
   constructor(public navCtrl: NavController, public userProvider: UserProvider) {
+    setTimeout(() => { // <=== 
+      this.buttonsVisible = true;
+    },2000);
+
     this.slideOptions = { 
-      onlyExternal: false,
+      onlyExternal: true,
       onInit: (slides: any) =>
         this.slider = slides
     }
   }
 
   ionViewDidLoad() {
-    this.slider.lockSwipeToPrev();
+    //this.slider.lockSwipeToPrev();
     // if(this.users){
     //   this.greeksFound = false;
     // }else{

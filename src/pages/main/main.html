@@ -52,7 +52,7 @@
       <p>
         <ion-grid>
           <ion-row class="center">
-            <ion-col width-25><span id="loc-title">Location</span></ion-col>
+            <ion-col width-25><span id="loc-title">{{user.location}}</span></ion-col>
             <ion-col width-50></ion-col>
             <ion-col width-10></ion-col>
             <ion-col width-10 class="img-center"><span id="loc-title">20</span></ion-col>
@@ -67,7 +67,7 @@
   </ion-slides>
   </div>
 
-<div class="fixed-pos">
+<div class="fixed-pos" *ngIf="buttonsVisible">
    <ion-grid *ngIf="greeksFound" class="closer">
     <ion-row class="center">
       <ion-col width-25 class="img-center" (click) = "redo()" *ngIf="premium">

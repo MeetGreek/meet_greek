@@ -591,14 +591,15 @@ writeUserData(): void {
                 content: 'Updating Profile from Facebook...' 
             });
             this.loading.present();
-        Facebook.api('/me?fields=id,name,picture.width(500).height(500),email', ['public_profile']).then(
+        Facebook.api('/me?fields=id,name,picture.width(500).height(500),email,birthday', ['public_profile',"user_about_me"]).then(
             (response) => {
                 this.storage.set('username', response.name);
                 this.storage.set('profile_picture', response.picture);
                 this.storage.set('email', response.email);
-                // let alert1 = this.util.doAlert("Error respone", this.storage.get('username'), "Ok");
-                // alert1.present();
-
+                this.storage.set('birthday', response.birthday);
+                let alert1 = this.util.doAlert("Error respone", response.birthday, "Ok");
+                alert1.present();
+                  
                 this.updateUserData(response);
 
                 //THIS CHECK
@@ -639,6 +640,7 @@ writeUserData(): void {
         let userName;
         let userEmail;
         let userProfilePicture;
+        let birthDay;
 
         this.storage.get('email').then(email => {
             userEmail = email;
@@ -657,6 +659,9 @@ writeUserData(): void {
             //     }
             // });
         });
+        this.storage.get('birthday').then(birthday => {
+            birthDay = birthday;
+        });
         this.storage.get('username').then(username => {
             userName = username;
         });
@@ -666,7 +671,8 @@ writeUserData(): void {
                 currentUserRef.update({
                     email: userEmail,
                     username: userName,
-                    profile_picture: userProfilePicture
+                    profile_picture: userProfilePicture,
+                    birthday: birthDay
                     // images: userImages
                 });
             }

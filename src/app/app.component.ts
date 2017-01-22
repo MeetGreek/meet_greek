@@ -18,9 +18,6 @@ import { SettingsPage } from '../pages/settings/settings';
 import { MainPage } from '../pages/main/main';
 import { ExtendedProfilePage } from '../pages/extended-profile/extended-profile';
 
-
-
-
 import { AuthProvider } from '../providers/auth-provider/auth-provider';
 import { Storage } from '@ionic/storage';
 import firebase from 'firebase';

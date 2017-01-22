@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController, Platform, LoadingController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
+import { Geolocation } from 'ionic-native';
 //import { TabsPage } from '../tabs/tabs';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { validateEmail } from '../../validators/email';
 import { AuthProvider } from '../../providers/auth-provider/auth-provider';
 import { UserProvider } from '../../providers/user-provider/user-provider';
 import { UtilProvider } from '../../providers/utils';
+import { CityService } from '../../providers/city-service';
+
 import { IntroPage } from '../intro/intro';
 import { WelcomePage } from '../welcome/welcome';
 import { Facebook } from 'ionic-native';
@@ -21,6 +24,7 @@ export class LoginPage {
   hasUserEnterDetails;
   loginForm: any;
   loading: any;
+  public cityResults: any;
 
   constructor(public nav: NavController,
     public af: AngularFire,
@@ -29,17 +33,39 @@ export class LoginPage {
     public util: UtilProvider,
     public storage: Storage,
     public platform: Platform,
-    public loadingCtrl: LoadingController) {
+    public loadingCtrl: LoadingController,
+    public ct: CityService) {
     this.loading = this.loadingCtrl.create({
       content: 'Authenticating...'
     });
-
   }
 
   ionViewDidLoad() {
     this.platform.ready().then(() => {
       this.storage.get('introShown4').then((result) => {
         if (!result) {
+          if (navigator.geolocation) {
+            var options = {
+              enableHighAccuracy: true
+            };
+          
+          navigator.geolocation.getCurrentPosition(position=> {
+            // console.info('using navigator');
+            console.info(position.coords.latitude);
+            console.info(position.coords.longitude);
+            this.loadCity(position.coords.latitude, position.coords.longitude);
+          }, error => {
+            console.log(error);
+          }, options);
+        }
+
+          // Geolocation.getCurrentPosition().then((resp) => {
+          // // alert(resp.coords.latitude);
+          // // alert(resp.coords.longitude);
+          
+          // }).catch((error) => {
+          //   console.log('Error getting location', error);
+          // });
           this.storage.set('introShown4', true);
           this.nav.setRoot(IntroPage);
         }
@@ -61,6 +87,13 @@ export class LoginPage {
       password: new FormControl("", Validators.required)
     });
 
+  }
+
+  loadCity(lat, lon){
+    this.ct.load(lat, lon)
+    .then(data => {
+      this.cityResults = data;
+    });
   }
 
   signin() {
@@ -122,9 +155,12 @@ export class LoginPage {
         this.storage.set('username', response.name);
         this.storage.set('profile_picture', response.picture);
         this.storage.set('email', response.email);
+        // this.storage.set('birthday', response.birthday);
+      
+
 
         
-        // let alert1 = this.util.doAlert("Error respone", this.storage.get('username'), "Ok");
+        // let alert1 = this.util.doAlert("Error respone", this.cityResults, "Ok");
         // alert1.present();
 
         this.writeUserData(response);
@@ -183,6 +219,8 @@ export class LoginPage {
     let userEmail;
     let userProfilePicture;
     let userImages = [];
+    //let birthDay;
+    let loc;
 
     this.storage.get('email').then(email => {
       userEmail = email;
@@ -204,20 +242,29 @@ export class LoginPage {
     this.storage.get('username').then(username => {
       userName = username;
     });
+    this.storage.get('location').then(location => {
+      loc = location;
+    });
+    // this.storage.get('birthday').then(birthday => {
+    //   birthDay = birthday;
+    // });
+
     this.userProvider.getUid().then(uid => {
       let currentUserRef = this.af.database.object(`/users/${uid}`);
       if (currentUserRef) {
         currentUserRef.update({
           email: userEmail,
           username: userName,
-          profile_picture: userProfilePicture
+          profile_picture: userProfilePicture,
+          location: loc
           // images: userImages
         });
       } else {
         currentUserRef.set({
           email: userEmail,
           username: userName,
-          profile_picture: userProfilePicture
+          profile_picture: userProfilePicture,
+          location: loc
           // images: userImages
         });
       }
