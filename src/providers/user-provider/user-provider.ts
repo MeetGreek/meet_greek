@@ -29,7 +29,9 @@ export class UserProvider {
 
     getUserInterlocutor(interlocutorUid) {
         // Getting UID of Logged In User
-        return this.af.database.object(`/users/${interlocutorUid}`);
+        return this.getUid().then(uid => {
+            return this.af.database.object(`/users/${interlocutorUid}`);
+        });
     }
 
 

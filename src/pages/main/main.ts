@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { Component, OnInit, trigger, state, style, transition, animate, keyframes } from '@angular/core';
+import { NavController, ModalController } from 'ionic-angular';
 import { Observable } from 'rxjs/Observable';
 import { UserProvider } from '../../providers/user-provider/user-provider';
 import { ChatViewPage } from '../chat-view/chat-view';
@@ -10,10 +10,38 @@ import { ExtendedProfilePage } from '../extended-profile/extended-profile';
 import { Filter } from '../../pipes/filter';
 
 @Component({
+  
   selector: 'page-main',
-  templateUrl: 'main.html'
+  templateUrl: 'main.html',
+  animations: [
+    trigger('fade', [
+      state('visible', style({
+        opacity: 1
+      })),
+      state('invisible', style({
+        opacity: 0
+      })),
+      transition('visible <=> invisible', animate('500ms linear'))
+    ]),
+ 
+    trigger('bounce', [
+      state('bouncing', style({
+        transform: 'translate3d(0,0,0)'
+      })),
+      transition('* => bouncing', [
+        animate('300ms ease-in', keyframes([
+          style({transform: 'translate3d(0,0,0)', offset: 0}),
+          style({transform: 'translate3d(0,-30px,0)', offset: 0.5}),
+          style({transform: 'translate3d(0,0,0)', offset: 1}) 
+        ]))
+      ])
+    ])
+  ]
 })
 export class MainPage {
+  buttonDisabled: any;
+  fadeState: String = 'invisible';
+  bounceState: String = 'noBounce';
   users:Observable<any[]>;
   uid:string;
   slideOptions: any; 
@@ -23,16 +51,22 @@ export class MainPage {
   premium = true;
   greeksFound = true;
   buttonsVisible = false;
-  constructor(public navCtrl: NavController, public userProvider: UserProvider) {
+  constructor(
+    public navCtrl: NavController,
+     public userProvider: UserProvider,
+     public modalCtrl: ModalController) {
     setTimeout(() => { // <=== 
       this.buttonsVisible = true;
+      this.toggleBounce();
+      this.toggleFade();
     },2000);
 
     this.slideOptions = { 
-      onlyExternal: true,
+      onlyExternal: false,
       onInit: (slides: any) =>
         this.slider = slides
     }
+    this.buttonDisabled = null;
   }
 
   ionViewDidLoad() {
@@ -79,10 +113,20 @@ export class MainPage {
   }
 
   ionSlideTap(key) {
-    alert("Go To Extended Profile");
-    let param = {uid: this.uid, interlocutor: key};   
+    this.buttonDisabled = true;
+    // alert("Go To Extended Profile");
+    let param = null;
+    param = {uid: this.uid, interlocutor: key};   
     //let param = {uid: "this uid", interlocutor: "other user key"};
-    this.navCtrl.push(ExtendedProfilePage, param);
+    let extendedProfileModal = this.modalCtrl.create(ExtendedProfilePage, param);
+      extendedProfileModal.onDidDismiss(data => {
+        if(data.foo == 'bar1'){
+          this.goToNextUser();
+        }
+        this.buttonDisabled = null;
+      });
+    extendedProfileModal.present();
+    //this.navCtrl.push(ExtendedProfilePage, );
   }
   ionSlideNextEnd(): void {
     alert("user liked this one");
@@ -158,6 +202,14 @@ export class MainPage {
       this.slider.slideNext();
     }
     alert('Load next user');
+  }
+
+  toggleFade() {
+    this.fadeState = 'visible';    
+  }
+ 
+  toggleBounce(){
+    this.bounceState =  'bouncing';   
   }
 
 }

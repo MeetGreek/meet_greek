@@ -1,12 +1,12 @@
 <ion-header>
     <ion-navbar color="primary">
         <ion-title><ion-spinner color="light" *ngIf="!(users | async)"></ion-spinner></ion-title> 
-        <ion-buttons left> <button ion-button (click) = "goToSettings()" >Settings</button> </ion-buttons>
-        <ion-buttons end> <button ion-button (click) = "goToChat()" >Chat</button> </ion-buttons>
+        <ion-buttons left> <button disabled={{buttonDisabled}} ion-button (click) = "goToSettings()" >Settings</button> </ion-buttons>
+        <ion-buttons end> <button disabled={{buttonDisabled}} ion-button (click) = "goToChat()" >Chat</button> </ion-buttons>
     </ion-navbar>
 </ion-header>
 
-<ion-content (swipe)="swipeEvent($event)">
+<ion-content (swipe)="swipeEvent($event)" no-bounce>
   
   <ion-card  *ngIf="!greeksFound" class="greeks-not-found">
     <ion-card-title class="center card-title">
@@ -71,16 +71,16 @@
    <ion-grid *ngIf="greeksFound" class="closer">
     <ion-row class="center">
       <ion-col width-25 class="img-center" (click) = "redo()" *ngIf="premium">
-        <img src="assets/images/Premium-slide1-A.png" />
+        <img [@fade]="fadeState" [@bounce]="bounceState" src="assets/images/Premium-slide1-A.png" />
       </ion-col>
       <ion-col width-25 class="img-center" (click) = "reject()">
-        <img src="assets/images/Premium-slide4-A.png" />
+        <img [@fade]="fadeState" [@bounce]="bounceState" src="assets/images/Premium-slide4-A.png" />
       </ion-col>
       <ion-col width-25 class="img-center" (click) = "like()">
-        <img src="assets/images/Premium-slide5-A.png" />
+        <img [@fade]="fadeState" [@bounce]="bounceState" src="assets/images/Premium-slide5-A.png" />
       </ion-col>
       <ion-col width-25 class="img-center" (click) = "superLike()" *ngIf="premium">
-        <img src="assets/images/Premium-slide2-A.png" />
+        <img [@fade]="fadeState" [@bounce]="bounceState" src="assets/images/Premium-slide2-A.png" />
       </ion-col>
     </ion-row>
   </ion-grid>
