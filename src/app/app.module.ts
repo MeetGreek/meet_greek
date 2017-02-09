@@ -1,7 +1,7 @@
 import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
-import { AngularFireModule, AuthProviders, AuthMethods } from 'angularfire2';
+import { AngularFireModule } from 'angularfire2';
 import { MyApp } from './app.component';
 import { SimpleAlert } from '../providers/simple-alert';
 import { TabsPage } from '../pages/tabs/tabs';
@@ -23,8 +23,13 @@ import { FeedbackPage } from '../pages/feedback/feedback';
 import { SettingsPage } from '../pages/settings/settings';
 import { MainPage } from '../pages/main/main';
 import { ExtendedProfilePage } from '../pages/extended-profile/extended-profile';
+import { ChatMatchPage } from '../pages/chat-match/chat-match';
+import { MatchPage } from '../pages/match/match';
+import { UserSettingsPage } from '../pages/user-settings/user-settings';
+
 
 import { Filter } from '../pipes/filter';
+import { ConvertDistance } from '../pipes/convert-distance'
 
 import { AuthProvider } from '../providers/auth-provider/auth-provider';
 import { ChatsProvider } from '../providers/chats-provider/chats-provider';
@@ -70,7 +75,11 @@ export const firebaseConfig = {
     MainPage,
     SettingsPage,
     ExtendedProfilePage,
-    Filter
+    ChatMatchPage,
+    MatchPage,
+    UserSettingsPage,
+    Filter,
+    ConvertDistance
   ],
   imports: [
     IonicModule.forRoot(MyApp,
@@ -108,7 +117,10 @@ export const firebaseConfig = {
     FeedbackPage,
     MainPage,
     SettingsPage,
-    ExtendedProfilePage
+    ChatMatchPage,
+    UserSettingsPage,
+    ExtendedProfilePage,
+    MatchPage
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler},
   AuthProvider, ChatsProvider, UserProvider, PurchaseProvider, UtilProvider, CityService, Storage, SimpleAlert, Data]

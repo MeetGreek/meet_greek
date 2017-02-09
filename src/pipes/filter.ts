@@ -1,5 +1,4 @@
 import { Injectable, Pipe } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 
 /*
   Generated class for the Filter pipe.

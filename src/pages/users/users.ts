@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { Observable } from 'rxjs/Observable';
 import { UserProvider } from '../../providers/user-provider/user-provider';
 import { ChatViewPage } from '../chat-view/chat-view';
-import { Storage } from '@ionic/storage';
 
 @Component({
     templateUrl: 'users.html'

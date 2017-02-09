@@ -42,6 +42,7 @@ export class AccountPage {
     this.userProvider.getUser().then(userObservable => {
       userObservable.subscribe(user => {
         this.user = user;
+        
       });
     });
     this.profilePage = 'profile';

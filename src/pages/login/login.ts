@@ -1,16 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController, Platform, LoadingController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
-import { Geolocation } from 'ionic-native';
+
 //import { TabsPage } from '../tabs/tabs';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { validateEmail } from '../../validators/email';
 import { AuthProvider } from '../../providers/auth-provider/auth-provider';
 import { UserProvider } from '../../providers/user-provider/user-provider';
 import { UtilProvider } from '../../providers/utils';
-import { CityService } from '../../providers/city-service';
 
-import { IntroPage } from '../intro/intro';
+// import { CityService } from '../../providers/city-service';
+// import { Geolocation } from 'ionic-native';
 import { WelcomePage } from '../welcome/welcome';
 import { Facebook } from 'ionic-native';
 import firebase from 'firebase';
@@ -18,13 +18,16 @@ import { AngularFire } from 'angularfire2';
 import { MainPage } from '../main/main';
 
 @Component({
+  selector: 'page-login',
   templateUrl: 'login.html'
 })
 export class LoginPage {
   hasUserEnterDetails;
   loginForm: any;
   loading: any;
-  public cityResults: any;
+
+  // coordinates = {lat: 0, lng: 0};
+  // public cityResults: any;
 
   constructor(public nav: NavController,
     public af: AngularFire,
@@ -33,8 +36,7 @@ export class LoginPage {
     public util: UtilProvider,
     public storage: Storage,
     public platform: Platform,
-    public loadingCtrl: LoadingController,
-    public ct: CityService) {
+    public loadingCtrl: LoadingController) {
     this.loading = this.loadingCtrl.create({
       content: 'Authenticating...'
     });
@@ -42,34 +44,20 @@ export class LoginPage {
 
   ionViewDidLoad() {
     this.platform.ready().then(() => {
-      this.storage.get('introShown4').then((result) => {
-        if (!result) {
-          if (navigator.geolocation) {
-            var options = {
-              enableHighAccuracy: true
-            };
-          
-          navigator.geolocation.getCurrentPosition(position=> {
-            // console.info('using navigator');
-            console.info(position.coords.latitude);
-            console.info(position.coords.longitude);
-            this.loadCity(position.coords.latitude, position.coords.longitude);
-          }, error => {
-            console.log(error);
-          }, options);
-        }
+      //   this.storage.get('introShown4').then((result) => {
+      //   if (!result) {
 
-          // Geolocation.getCurrentPosition().then((resp) => {
-          // // alert(resp.coords.latitude);
-          // // alert(resp.coords.longitude);
+      //     // Geolocation.getCurrentPosition().then((resp) => {
+      //     // // alert(resp.coords.latitude);
+      //     // // alert(resp.coords.longitude);
           
-          // }).catch((error) => {
-          //   console.log('Error getting location', error);
-          // });
-          this.storage.set('introShown4', true);
-          this.nav.setRoot(IntroPage);
-        }
-      });
+      //     // }).catch((error) => {
+      //     //   console.log('Error getting location', error);
+      //     // });
+      //     // this.storage.set('introShown4', true);
+      //     // this.nav.setRoot(IntroPage);
+      //   }
+      // });
       this.storage.get('hasUserEnterDetails').then((result) => {
         if (!result) {
           this.hasUserEnterDetails = false;
@@ -82,29 +70,21 @@ export class LoginPage {
 
 
   ngOnInit() {
-    this.loginForm = new FormGroup({
-      email: new FormControl("", [Validators.required, validateEmail]),
-      password: new FormControl("", Validators.required)
-    });
-
-  }
-
-  loadCity(lat, lon){
-    this.ct.load(lat, lon)
-    .then(data => {
-      this.cityResults = data;
-    });
+    // this.loginForm = new FormGroup({
+    //   email: new FormControl("", [Validators.required, validateEmail]),
+    //   password: new FormControl("", Validators.required)
+    // });
   }
 
   signin() {
-    this.auth.signin(this.loginForm.value)
-      .then((data) => {
-        this.storage.set('uid', data.uid);
-        this.nav.setRoot(MainPage);
-      }, (error) => {
-        let alert = this.util.doAlert("Error", error.message, "Ok");
-        alert.present();
-      });
+    // this.auth.signin(this.loginForm.value)
+    //   .then((data) => {
+    //     this.storage.set('uid', data.uid);
+    //     this.nav.setRoot(MainPage);
+    //   }, (error) => {
+    //     let alert = this.util.doAlert("Error", error.message, "Ok");
+    //     alert.present();
+    //   });
   };
 
   createAccount() {
@@ -149,12 +129,13 @@ export class LoginPage {
   }
 
   getProfile(): void {
-    Facebook.api('/me?fields=id,name,picture.width(500).height(500),email', ['public_profile']).then(
+    Facebook.api('/me?fields=id,name,picture.width(500).height(500),email,first_name', ['public_profile']).then(
       (response) => {
         this.storage.set('uid', response.id);
         this.storage.set('username', response.name);
         this.storage.set('profile_picture', response.picture);
         this.storage.set('email', response.email);
+        this.storage.set('first_name', response.first_name);
         // this.storage.set('birthday', response.birthday);
       
 
@@ -201,7 +182,7 @@ export class LoginPage {
       },
 
       (err) => {
-        console.log(err);
+        // console.log(err);
         // let alert = this.doAlert.create({
         //   title: 'Oops!',
         //   subTitle: 'Something went wrong, please try again later.',
@@ -214,13 +195,33 @@ export class LoginPage {
     );
   }
 
+  formatLocalDate() {
+    var now = new Date(),
+        tzo = -now.getTimezoneOffset(),
+        dif = tzo >= 0 ? '+' : '-',
+        pad = function(num) {
+            var norm = Math.abs(Math.floor(num));
+            return (norm < 10 ? '0' : '') + norm;
+        };
+    return now.getFullYear() 
+        + '-' + pad(now.getMonth()+1)
+        + '-' + pad(now.getDate())
+        + 'T' + pad(now.getHours())
+        + ':' + pad(now.getMinutes()) 
+        + ':' + pad(now.getSeconds()) 
+        + dif + pad(tzo / 60) 
+        + ':' + pad(tzo % 60);
+  }
+
   writeUserData(response): void {
     let userName;
     let userEmail;
     let userProfilePicture;
+    let user_first_name;
     let userImages = [];
+    let upAt = this.formatLocalDate();
+    
     //let birthDay;
-    let loc;
 
     this.storage.get('email').then(email => {
       userEmail = email;
@@ -242,8 +243,9 @@ export class LoginPage {
     this.storage.get('username').then(username => {
       userName = username;
     });
-    this.storage.get('location').then(location => {
-      loc = location;
+
+    this.storage.get('first_name').then(first_name => {
+      user_first_name = first_name;
     });
     // this.storage.get('birthday').then(birthday => {
     //   birthDay = birthday;
@@ -256,17 +258,21 @@ export class LoginPage {
           email: userEmail,
           username: userName,
           profile_picture: userProfilePicture,
-          location: loc
+          first_name: user_first_name,
+          updatedAt: upAt
           // images: userImages
         });
+        
       } else {
         currentUserRef.set({
           email: userEmail,
           username: userName,
           profile_picture: userProfilePicture,
-          location: loc
+          first_name: user_first_name,
+          createdAt: upAt
           // images: userImages
         });
+       
       }
     });
   }

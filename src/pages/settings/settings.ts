@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, ModalController } from 'ionic-angular';
+import { NavController, ModalController, LoadingController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { AuthProvider } from '../../providers/auth-provider/auth-provider';
 import { UserProvider } from '../../providers/user-provider/user-provider';
@@ -19,9 +19,10 @@ import { LoginPage } from '../login/login';
   templateUrl: 'settings.html'
 })
 export class SettingsPage {
-
+  loading : any ;
+  hasLoaded = false;
   isProfile;
-  profilePage;
+  profilePageChoice: any;
   rootNav;
   slideOptions: any;
   distance: any;
@@ -31,7 +32,8 @@ export class SettingsPage {
   messages;
   superLikes;
   publicDiscoverable;
-  user = { username: "", profile_picture: "", aboutMe: "", descent: "", areas: [], church: "", education: "", location: "", images: [] };
+  user = <any>{};
+  // user = { username: "", profile_picture: "", aboutMe: "", descent: "", areas: [], church: "", location: "", images: [] };
   constructor(
     public nav: NavController,
     public af: AngularFire,
@@ -40,38 +42,50 @@ export class SettingsPage {
     public local: Storage,
     public util: UtilProvider,
     public storage: Storage,
-    public modalCtrl: ModalController) {
+    public modalCtrl: ModalController,
+    public loadingCtrl: LoadingController) {
+
+    this.profilePageChoice = 'profile';
+    // this.profilePage = 'profile';
+    this.isProfile = true;
+    // this.slideOptions = {
+    //   pager: true
+    // };
+    this.storage.get('discoverable').then(discoverable => {
+            this.publicDiscoverable = discoverable;
+        });
+        this.storage.get('distance').then(dist => {
+            this.distance = dist;
+        });
+        this.storage.get('age').then(ag => {
+            this.age = ag;
+        });
+        this.storage.get('preference').then(pref => {
+            this.searchPreference = pref;
+        });
+        this.storage.get('new_match_notif').then(nm => {
+            this.newMatches = nm;
+        });
+        this.storage.get('messages_notif').then(msg => {
+            this.messages = msg;
+        });
+        this.storage.get('superlikes_notif').then(sl => {
+            this.superLikes = sl;
+        });
     this.userProvider.getUser().then(userObservable => {
-      userObservable.subscribe(user => {
-        this.user = user;
+      this.loading = this.loadingCtrl.create({ 
+          content: 'Getting user information...' 
+      });
+       this.loading.present();
+      userObservable.subscribe(data => {
+        this.user = data;
+        this.hasLoaded = true;
+        this.loading.dismiss();
       });
     });
-    this.profilePage = 'profile';
-    this.isProfile = true;
-    this.slideOptions = {
-      pager: true
-    };
-    this.storage.get('discoverable').then(discoverable => {
-        this.publicDiscoverable = discoverable;
-    });
-    this.storage.get('distance').then(dist => {
-        this.distance = dist;
-    });
-    this.storage.get('age').then(ag => {
-        this.age = ag;
-    });
-    this.storage.get('preference').then(pref => {
-        this.searchPreference = pref;
-    });
-    this.storage.get('new_match_notif').then(nm => {
-        this.newMatches = nm;
-    });
-    this.storage.get('messages_notif').then(msg => {
-        this.messages = msg;
-    });
-    this.storage.get('superlikes_notif').then(sl => {
-        this.superLikes = sl;
-    });
+  }
+  ionViewWillEnter() {
+    
   }
 
   ionViewWillLeave() {
@@ -94,11 +108,13 @@ export class SettingsPage {
   }
 
   profileClicked(): void {
+    // this.profilePageChoice = 'profile';
     this.isProfile = true;
-    this.writeUserData();
+    //this.writeUserData();
   }
 
   settingsClicked(): void {
+    // this.profilePageChoice = 'settings';
     this.isProfile = false;
   }
 
@@ -108,7 +124,7 @@ export class SettingsPage {
     this.local.remove('profile_picture');
     this.local.remove('email');
     this.nav.setRoot(LoginPage);
-    this.local.remove('userInfo');
+    // this.local.remove('userInfo');
     Facebook.logout();
     this.auth.logout();
   }
@@ -221,7 +237,7 @@ export class SettingsPage {
               messages: userMessagesNotif,
               superLikes: userSuperLikes
         });
-      } 
+      }
     });
   }
 

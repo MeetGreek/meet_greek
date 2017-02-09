@@ -34,12 +34,10 @@ export class AboutMePage {
     this.storage.set('hasUserEnterDetails', true);
     this.storage.set('aboutMe', this.aboutMeText);
     this.writeUserData();
-    this.nav.setRoot(MainPage);
   }
 
   writeUserData(): void {
     let userAboutMe;
-      
     this.storage.get('aboutMe').then(aboutMe => {
       userAboutMe = aboutMe;
     });
@@ -50,6 +48,7 @@ export class AboutMePage {
           currentUserRef.update({
               aboutMe: userAboutMe
         });
+        this.nav.setRoot(MainPage);
       } 
     });
   }

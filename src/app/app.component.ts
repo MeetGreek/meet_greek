@@ -3,24 +3,9 @@ import { Platform } from 'ionic-angular';
 import { StatusBar, Splashscreen } from 'ionic-native';
 import { AngularFire } from 'angularfire2';
 import { LoginPage } from '../pages/login/login';
-import { TabsPage } from '../pages/tabs/tabs';
-import { IntroPage } from '../pages/intro/intro';
-import { WelcomePage } from '../pages/welcome/welcome';
-import { DescentPage } from '../pages/descent/descent';
-import { AreasPage } from '../pages/areas/areas';
-import { ChurchPage } from '../pages/church/church';
-import { AboutMePage } from '../pages/about-me/about-me';
-import { EditProfilePage } from '../pages/edit-profile/edit-profile';
-import { PremiumPage } from '../pages/premium/premium';
-import { LegalPage } from '../pages/legal/legal';
-import { FeedbackPage } from '../pages/feedback/feedback';
-import { SettingsPage } from '../pages/settings/settings';
 import { MainPage } from '../pages/main/main';
-import { ExtendedProfilePage } from '../pages/extended-profile/extended-profile';
-
 import { AuthProvider } from '../providers/auth-provider/auth-provider';
 import { Storage } from '@ionic/storage';
-import firebase from 'firebase';
 import { Keyboard } from 'ionic-native';
 
 @Component({
@@ -70,12 +55,15 @@ export class MyApp {
       //       this.rootPage = LoginPage;
       //     }
       // });
+      this.storage.get('hasUserReachedMain').then(reachedMain => {
         this.af.auth.subscribe(auth => {
-        if(auth) {
+          if(auth && reachedMain) {
             this.rootPage = MainPage;
           }else{
             this.rootPage = LoginPage;
           }
+        });
       });
+      
   }
 }

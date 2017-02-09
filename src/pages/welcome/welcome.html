@@ -3,7 +3,7 @@
         <ion-title>Welcome</ion-title>
     </ion-navbar>
 </ion-header>
-<ion-content>
+<ion-content (click)="tapToContinue()">
     <ion-card *ngIf="user.profile_picture">
         <ion-card-content>
             <ion-item>
@@ -19,7 +19,7 @@
     <ion-card *ngIf="user.profile_picture">
         <ion-card-content>
             <ion-item>
-                <h1 class="center" *ngIf="user.profile_picture">{{user.username}}!</h1>
+                <h1 class="center" *ngIf="user.profile_picture">{{user.first_name}}!</h1>
             </ion-item>
         </ion-card-content>
     </ion-card>

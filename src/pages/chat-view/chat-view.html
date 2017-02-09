@@ -1,12 +1,17 @@
-<ion-header class="fixed-header">
+<ion-header>
   <ion-navbar color="primary">
-    <ion-title>Chat</ion-title>
+    <ion-title>
+      <button ion-button (click)="showProfile()">
+        <img class="title-img" *ngIf="!interlocutorProfile.profile_picture" src="assets/images/default.png">
+        <img class="title-img" *ngIf="interlocutorProfile.profile_picture" src="{{interlocutorProfile.profile_picture}}">
+        <span class="title-text">{{ interlocutorProfile.first_name }}</span>
+      </button>
+    </ion-title>
     <ion-buttons end>
-      <button ion-button (click)="sendPicture()"><ion-icon name="image" ></ion-icon> Send Image</button>
+      <button ion-button (click)="sendPicture()"><ion-icon name="image" ></ion-icon></button>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
-
 <ion-content class="chat-view" id="chat-view">  
   <div class="messages">
       <div class="message" *ngFor="let chat of chats | async" [ngClass]="{'me': uid === chat.from}">
@@ -15,7 +20,6 @@
       </div>
   </div>
 </ion-content>
-
 <ion-footer keyboard-attach>
   <ion-toolbar>
     <ion-row>

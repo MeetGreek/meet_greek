@@ -1,7 +1,5 @@
+page-chat-view {
 .chat-view {
-  .fixed-header {
-    position: fixed;
-  }
   .messages {
     width: 100%;
     position: absolute;
@@ -28,4 +26,14 @@
 //   .scroll-content {
 //   padding-bottom:0!important;
 // }
+}
+.title-text {
+    margin-left: 10px !important;
+  }
+
+  .title-img {
+    border-radius: 20px !important;
+    height: 40px !important;
+    width: 40px !important;
+  }
 }

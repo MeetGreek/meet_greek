@@ -8,7 +8,6 @@ import firebase from 'firebase'
 import { AngularFire } from 'angularfire2';
 import { UserProvider } from '../../providers/user-provider/user-provider';
 import { Storage } from '@ionic/storage';
-import { TabsPage } from '../tabs/tabs';
 import { SettingsPage } from '../settings/settings';
 import { Facebook } from 'ionic-native';
 import { UtilProvider } from '../../providers/utils';
@@ -28,7 +27,7 @@ declare var cordova;
 })
 export class EditProfilePage {
 
-  loaded: boolean = false;
+  loadedEdit: boolean = false;
   photos: PhotoModel[] = [];
   storageRef = firebase.storage().ref();
   userPhotos = [];
@@ -41,7 +40,7 @@ export class EditProfilePage {
   isMother = false;
   isNo = false;
   loading : any ;
-  user = {username: "", profile_picture: "", aboutMe: "", descent: "", areas: [], church: "", education: "", location: "", gender: "", images: []};
+  user = <any>{};
   
   constructor(
     public userProvider: UserProvider,
@@ -61,7 +60,7 @@ export class EditProfilePage {
       this.userProvider.getUser().then(userObservable => {
             userObservable.subscribe(user => {
                 this.user = user;
-                this.loaded = true;
+                this.loadedEdit = true;
                 this.msg = user.aboutMe;
                 this.gender = this.user.gender;
             });
@@ -138,7 +137,7 @@ export class EditProfilePage {
           this.photos.push(new PhotoModel(savedPhoto.image));
         });
       }
-      this.loaded = true;
+      this.loadedEdit = true;
     });
   }
 
@@ -149,7 +148,7 @@ export class EditProfilePage {
   }
 
   takePhoto(): any {
-    if (!this.loaded) {
+    if (!this.loadedEdit) {
       return false;
     }
     if (!this.platform.is('cordova')) {
@@ -198,7 +197,7 @@ export class EditProfilePage {
   }
 
   takePhoto2(): void {
-    if (this.loaded) {
+    if (this.loadedEdit) {
       
     
     // if(this.maxPhotos == false){
@@ -221,7 +220,7 @@ export class EditProfilePage {
   }
 
   takePhoto3(): void {
-    if (this.loaded) {
+    if (this.loadedEdit) {
       
     
     // if(this.maxPhotos == false){
@@ -233,7 +232,7 @@ export class EditProfilePage {
       encodingType: Camera.EncodingType.JPEG,
       targetWidth: 500,
       targetHeight: 500,
-      saveToPhotoAlbum: true
+      saveToPhotoAlbum: false
       }).then(imageData => {
         this.uploadPicture(imageData)
       }, error => {
@@ -272,7 +271,6 @@ export class EditProfilePage {
   }
 
   removePhoto(photo): void {
-    let today = new Date();
     let index = this.photos.indexOf(photo);
     if (index > -1) {
       this.photos.splice(index, 1);
@@ -341,12 +339,15 @@ writeUserData(): void {
 
   checkPhotos(): void {
     this.storage.get('images').then(photo => {
-      if (photo.length == 6){
-        this.maxPhotos = true;
+      if(photo) {
+        if (photo.length == 6){
+          this.maxPhotos = true;
+        }else {
+          this.maxPhotos = false;
+        }
       }else {
         this.maxPhotos = false;
       }
-      
     });
   }
 
@@ -591,14 +592,11 @@ writeUserData(): void {
                 content: 'Updating Profile from Facebook...' 
             });
             this.loading.present();
-        Facebook.api('/me?fields=id,name,picture.width(500).height(500),email,birthday', ['public_profile',"user_about_me"]).then(
+        Facebook.api('/me?fields=id,name,picture.width(500).height(500),email', ['public_profile']).then(
             (response) => {
                 this.storage.set('username', response.name);
                 this.storage.set('profile_picture', response.picture);
                 this.storage.set('email', response.email);
-                this.storage.set('birthday', response.birthday);
-                let alert1 = this.util.doAlert("Error respone", response.birthday, "Ok");
-                alert1.present();
                   
                 this.updateUserData(response);
 
@@ -616,10 +614,6 @@ writeUserData(): void {
 
                 // this.menu.enable(true);
                 this.loading.dismiss();
-                
-                
-                // this.nav.setRoot(WelcomePage);
-
             },
 
             (err) => {
@@ -640,7 +634,6 @@ writeUserData(): void {
         let userName;
         let userEmail;
         let userProfilePicture;
-        let birthDay;
 
         this.storage.get('email').then(email => {
             userEmail = email;
@@ -659,9 +652,6 @@ writeUserData(): void {
             //     }
             // });
         });
-        this.storage.get('birthday').then(birthday => {
-            birthDay = birthday;
-        });
         this.storage.get('username').then(username => {
             userName = username;
         });
@@ -671,8 +661,7 @@ writeUserData(): void {
                 currentUserRef.update({
                     email: userEmail,
                     username: userName,
-                    profile_picture: userProfilePicture,
-                    birthday: birthDay
+                    profile_picture: userProfilePicture
                     // images: userImages
                 });
             }

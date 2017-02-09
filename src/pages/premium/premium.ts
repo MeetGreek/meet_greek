@@ -9,9 +9,7 @@ import { PurchaseProvider } from '../../providers/purchase-provider/purchase-pro
 export class PremiumPage {
   slideOptions: any; 
   constructor(public viewCtrl: ViewController, public purchase: PurchaseProvider) {
-    this.slideOptions = { 
-      pager: true 
-    }; 
+
   }
 
   ionViewDidLoad() {
