@@ -19,7 +19,7 @@ export class ExtendedProfilePage {
   uid:string;
   interlocutor:string;
   slideOptions: any;
-  user = { username: "", profile_picture: "", aboutMe: "", descent: "", areas: [], church: "", education: "", location: "", images: [] };
+  user = { username: "", userImage0: "", aboutMe: "", descent: "", areas: [], church: "", education: "", location: "", images: [] };
   constructor(
     public viewCtrl: ViewController, 
     params:NavParams,

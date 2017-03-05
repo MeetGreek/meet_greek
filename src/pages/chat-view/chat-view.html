@@ -2,8 +2,8 @@
   <ion-navbar color="primary">
     <ion-title>
       <button ion-button (click)="showProfile()">
-        <img class="title-img" *ngIf="!interlocutorProfile.profile_picture" src="assets/images/default.png">
-        <img class="title-img" *ngIf="interlocutorProfile.profile_picture" src="{{interlocutorProfile.profile_picture}}">
+        <img class="title-img" *ngIf="!interlocutorProfile.userImage0" src="assets/images/default.png">
+        <img class="title-img" *ngIf="interlocutorProfile.userImage0" src="{{interlocutorProfile.userImage0}}">
         <span class="title-text">{{ interlocutorProfile.first_name }}</span>
       </button>
     </ion-title>

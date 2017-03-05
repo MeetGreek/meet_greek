@@ -12,8 +12,8 @@
         <h3 class="center">{{ user.username }}</h3>
       </ion-item>
       <ion-item>
-        <img *ngIf="!user.profile_picture" src="assets/images/default.png">
-        <img *ngIf="user.profile_picture" src="{{user.profile_picture}}">
+        <img *ngIf="!user.userImage0" src="assets/images/default.png">
+        <img *ngIf="user.userImage0" src="{{user.userImage0}}">
       </ion-item>
       <ion-grid>
         <ion-row>

@@ -33,6 +33,7 @@ import { ConvertDistance } from '../pipes/convert-distance'
 
 import { AuthProvider } from '../providers/auth-provider/auth-provider';
 import { ChatsProvider } from '../providers/chats-provider/chats-provider';
+import { LikeProvider } from '../providers/like-provider/like-provider';
 import { UserProvider } from '../providers/user-provider/user-provider';
 import { PurchaseProvider } from '../providers/purchase-provider/purchase-provider';
 import { CityService } from '../providers/city-service';
@@ -123,6 +124,6 @@ export const firebaseConfig = {
     MatchPage
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler},
-  AuthProvider, ChatsProvider, UserProvider, PurchaseProvider, UtilProvider, CityService, Storage, SimpleAlert, Data]
+  AuthProvider, ChatsProvider, LikeProvider, UserProvider, PurchaseProvider, UtilProvider, CityService, Storage, SimpleAlert, Data]
 })
 export class AppModule {}

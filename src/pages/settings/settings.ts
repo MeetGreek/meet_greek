@@ -191,7 +191,7 @@ export class SettingsPage {
 
   writeUserData(): void {
     let userPublic;
-    this.storage.get('public').then(publicPreference => {
+    this.storage.get('discoverable').then(publicPreference => {
       userPublic = publicPreference;
     });
 

@@ -40,6 +40,12 @@ export class UserProvider {
         return this.af.database.list('/users');
     }
 
+    getAllUsersKeys() {
+        var i = this.af.database.object('/users', { preserveSnapshot: true })
+        i.subscribe(snapshot => {
+        });
+    }
+
     getAllUsersExcept() {
         return this.af.database.list('/users');
     }

@@ -167,6 +167,7 @@ export class LoginPage {
             lower: 18,
             upper: 78
           }
+          this.storage.set('userImages[0]', response.picture.data.url);
           this.storage.set('discoverable', false);
           this.storage.set('distance', 0);
           this.storage.set('age', startAge);
@@ -228,6 +229,7 @@ export class LoginPage {
     });
     this.storage.get('profile_picture').then(profile_picture => {
       userProfilePicture = profile_picture.data.url;
+      
       // this.storage.get('images').then(photos => {
       //     if(photos){
       //         for (let photo of photos) {
@@ -239,6 +241,9 @@ export class LoginPage {
       //         this.storage.set('images', userImages);
       //     }
       // });
+    });
+    this.storage.get('userImages[0]').then(picture => {
+      userImages[0] = picture;
     });
     this.storage.get('username').then(username => {
       userName = username;
@@ -259,7 +264,8 @@ export class LoginPage {
           username: userName,
           profile_picture: userProfilePicture,
           first_name: user_first_name,
-          updatedAt: upAt
+          updatedAt: upAt,
+          userImage0: userProfilePicture
           // images: userImages
         });
         
@@ -269,7 +275,8 @@ export class LoginPage {
           username: userName,
           profile_picture: userProfilePicture,
           first_name: user_first_name,
-          createdAt: upAt
+          createdAt: upAt,
+          userImage0: userImages[0]
           // images: userImages
         });
        

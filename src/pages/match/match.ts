@@ -13,7 +13,7 @@ import { ChatViewPage } from '../chat-view/chat-view';
 export class MatchPage {
   uid:string;
   interlocutor:string;
-  user = { username: "", profile_picture: "" };
+  user = { username: "", userImage0: "" };
   constructor(
     public nav: NavController,
     public viewCtrl: ViewController, 

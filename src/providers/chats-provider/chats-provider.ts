@@ -12,6 +12,10 @@ export class ChatsProvider {
         return chats;
      });
   }
+
+  getUserChats(uid) {
+      return this.af.database.list(`/users/${uid}/chats`);
+  }
   
   // Add Chat References to Both users
   addChats(uid,interlocutor) {

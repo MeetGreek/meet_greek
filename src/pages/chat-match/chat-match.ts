@@ -14,11 +14,13 @@ import { MatchPage } from '../match/match';
   templateUrl: 'chat-match.html'
 })
 export class ChatMatchPage {
+  everythingLoaded = false;
   chats:Observable<any[]>;
   users:Observable<any[]>;
   uid:string;
   searchQuery: string = '';
-  
+  userChats:Observable<any[]>;
+  chatsKeys = [];
   constructor(
     public chatsProvider: ChatsProvider, 
     public userProvider: UserProvider, 
@@ -37,14 +39,33 @@ export class ChatMatchPage {
           });
       });
     this.userProvider.getUid()
-      .then(uid => {
-          this.uid = uid;
-          this.users = this.userProvider.getAllUsers();
-      });
+    .then(uid => {
+        this.uid = uid;
+        this.users = this.userProvider.getAllUsers();
+        this.userChats = this.chatsProvider.getUserChats(uid);
+        this.addToChatsArray();
+    });
+    // this.userProvider.getUid()
+    //   .then(uid => {
+    //       this.uid = uid;
+    //       this.users = this.userProvider.getAllUsers();
+    //   });
   }
 
   ionViewDidLoad() {
     
+  }
+
+  addToChatsArray(): void {
+    this.userChats.subscribe(chats => {
+        this.chatsKeys = [];
+        // items is an array
+        chats.forEach(chat => {
+          //console.log(item.$key);
+            this.chatsKeys.push(chat.$key);
+        });
+        this.everythingLoaded = true;
+    });
   }
 
   openChat(key) {
