@@ -80,4 +80,28 @@ page-main {
     align-items: center;
   }
 
+  #card-stack ion-card {
+    border-radius: 5px;
+    text-align: center;
+    height: 90%;
+  }
+
+  #card-image {
+    pointer-events: none;
+  }
+
+  #card-title {
+    padding-top: 10px;
+    font-weight: 400;
+  }
+
+  #card-subtitle {
+    color: grey;
+  }
+
+  #infos-like {
+    padding-top: 10px;
+    font-size: 16px;
+  }
+
 }

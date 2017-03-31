@@ -27,6 +27,11 @@ import { ChatMatchPage } from '../pages/chat-match/chat-match';
 import { MatchPage } from '../pages/match/match';
 import { UserSettingsPage } from '../pages/user-settings/user-settings';
 
+//Swipe screen
+import { SwingModule } from 'angular2-swing';
+import { HttpModule } from '@angular/http';
+//import { CapitalizePipe } from '../shared/pipes/capitalize.pipe';
+
 
 import { Filter } from '../pipes/filter';
 import { ConvertDistance } from '../pipes/convert-distance'
@@ -95,7 +100,8 @@ export const firebaseConfig = {
         }
       }),
     AngularFireModule.initializeApp(firebaseConfig),
-    
+    SwingModule,
+    HttpModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [

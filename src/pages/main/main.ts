@@ -1,5 +1,5 @@
 // import { Component, OnInit, trigger, state, style, transition, animate, keyframes } from '@angular/core';
-import { Component } from '@angular/core';
+import { Component, ViewChild, ViewChildren, QueryList  } from '@angular/core';
 import { NavController, ModalController, Slides, Content } from 'ionic-angular';
 import { Observable } from 'rxjs/Observable';
 import { UserProvider } from '../../providers/user-provider/user-provider';
@@ -11,8 +11,13 @@ import { SettingsPage } from '../settings/settings';
 import { ExtendedProfilePage } from '../extended-profile/extended-profile';
 import { ChatMatchPage }  from '../chat-match/chat-match';
 import { ConvertDistance } from '../../pipes/convert-distance'
-import { ViewChild } from '@angular/core';
 import { MatchPage } from '../match/match';
+
+//Swipe Screen
+import { SwingStackComponent, StackConfig, SwingCardComponent, ThrowEvent } from 'angular2-swing';
+import { Http } from '@angular/http';
+import 'rxjs/add/operator/map';
+import { ToastController } from 'ionic-angular';
 
 @Component({
   selector: 'page-main',
@@ -43,9 +48,20 @@ import { MatchPage } from '../match/match';
   // ]
 })
 export class MainPage {
+  @ViewChild('myswing1') swingStack: SwingStackComponent;
+  @ViewChildren('mycards1') swingCards: QueryList<SwingCardComponent>;
+
+  cards: Array<any>;
+  sortedUsers: Array<any>;
+  cardUserArray: Array<any>;
+  stackConfig: StackConfig;
+  previousIndex = 0;
+  userArrayIndex = 0;
+  isLastElement = false;
   isLiked = false;
   everythingLoaded = false;
   everythingLoaded2 = false;
+  cardUsersLoaded = false;
   likeKeys = [];
   @ViewChild('mainSlider') mainSlider: Slides;
   @ViewChild(Content) content: Content;
@@ -56,7 +72,7 @@ export class MainPage {
   buttonDisabled: any;
   // fadeState: String = 'visible';
   // bounceState: String = 'noBounce';
-  
+  greeksNotFound = false;
   loggedUser = <any>{};
   uid:string;
   slideOptions: any; 
@@ -71,6 +87,8 @@ export class MainPage {
   users:Observable<any[]>;
   // buttonsVisible = false;
   constructor(
+    private http: Http,
+    private toastCtrl: ToastController,
     public navCtrl: NavController,
      public userProvider: UserProvider,
      public modalCtrl: ModalController,
@@ -90,15 +108,25 @@ export class MainPage {
     // }
     this.storage.set('hasUserReachedMain', true);
     this.buttonDisabled = null;
+    //Swipe
+    this.stackConfig = {
+      throwOutConfidence: (offset, element) => {
+        return Math.min(Math.abs(offset) / (element.offsetWidth/2), 1);
+      },
+      throwOutDistance: (d) => {
+        return 800;
+      }
+    };
   }
-
   ionViewDidLoad() {
     this.userProvider.getUid()
     .then(uid => {
         this.uid = uid;
         this.users = this.userProvider.getAllUsers();
         this.userLikes = this.likeProvider.getUserLikes(uid);
+        this.sortedUsers = [];
         this.addToLikedArray();
+        this.addNewCardsFromFirebase();
         // this.buttonsVisible = true;
         //this.getCurrentInterloculot(this.mainSlider.getActiveIndex());
     });
@@ -138,9 +166,6 @@ export class MainPage {
     
   }
 
-  f(event) 
-  { console.log(event);}
-    
     openChat(key) {
         let param = {uid: this.uid, interlocutor: key};
         this.navCtrl.push(ChatViewPage,param);
@@ -295,7 +320,7 @@ export class MainPage {
   addToExistingLikedArray(interlocutor): void {
         this.likeKeys.push(interlocutor);
         console.log(this.likeKeys);
-        this.everythingLoaded = true;  
+        this.everythingLoaded = true;
   }
 
   slideChanged() {
@@ -326,6 +351,7 @@ export class MainPage {
   getCurrentInterloculot(index): void {
     
     this.users.subscribe(items => {
+      
       if(this.everythingLoaded2 != true){
         this.userkeys = [];
         // items is an array
@@ -430,6 +456,135 @@ export class MainPage {
  
   toggleBounce(){
     // this.bounceState =  'bouncing';   
+  }
+
+  //SWIPE
+  ngAfterViewInit() {
+    this.swingStack.throwin.subscribe((event: ThrowEvent) => {
+      event.target.style.background = '#ffffff';
+      console.log(event);
+    });
+    // this.cards = [];
+    // this.addNewCards(1);
+
+  }
+
+  voteUp(like: boolean) {
+    let interlocutor = this.sortedUsers[0].$key;
+    //this.sortedUsers = [];
+    let removedCard = this.sortedUsers.pop();
+    let message: string;
+    let uid =this.uid;
+    if (like) {
+      // let interlocutor = this.currentInterlocutorKey;
+      this.likeProvider.addLike(uid, interlocutor);
+      this.interlocutorLikes = this.likeProvider.getUserLikes(interlocutor);
+        this.interlocutorLikes.subscribe(likes => {
+          // items is an array
+          likes.forEach(chat => {
+            //console.log(item.$key);
+            if(chat.$key == this.uid){
+              this.match(interlocutor);
+            }
+          });
+      });
+    } else {
+      this.likeProvider.reject(uid, interlocutor);
+      message = 'You just disliked :(';
+    }
+    
+    let toast = this.toastCtrl.create({
+      message: message,
+      duration: 2000,
+      position: 'bottom'
+    });
+    toast.present(toast);
+  }
+
+  addNewCards(count: number) {
+    //alert("IS CALLED");
+    
+    // this.http.get('https://randomuser.me/api/?results=' + count)
+    //   .map(data => data.json().results)
+    //   .subscribe(result => {
+    //     for (let val of result) {
+    //       val.age = this.calculateAge(val.dob);
+    //       this.cards.push(val);
+    //     }
+    //     console.log("*****************************************");
+    //     console.log(this.cards);
+    //     console.log("*****************************************");
+    //   });
+  }
+
+  addNewCardsFromFirebase(): void {
+    this.users.subscribe(user => {
+        // items is an array
+        // user.forEach(u => {
+        //   //console.log(item.$key);
+        //     this.sortedUsers.push(u);
+        // });
+        //this.sortedUsers.push(user[0]);
+        this.userArrayIndex = user.length;
+        
+        for (var i = this.previousIndex; i < user.length; i++) {
+          // if (matchesSomeCriteria(products[i])) {
+          //   doSomething();
+          //   break;
+          // }
+          
+          if(user[i].$key !== this.uid && this.likeKeys.indexOf(user[i].$key) == -1){
+            
+            this.sortedUsers.push(user[i]);
+            this.previousIndex = i + 1;
+            
+            break;
+          }
+          
+          // if(i == user.length){
+          //   this.greeksFound = false;
+          // }
+        }
+        
+        // this.sortedUsers.forEach(user => {
+        //   this.cardUserArray.push(user);
+        console.log(this.sortedUsers.length);
+        // if(this.sortedUsers.length == 0){
+        //   this.greeksNotFound = true;
+        //   //this.navCtrl.setRoot(this.navCtrl.getActive().component);
+        // }else{
+        //   this.greeksNotFound = false;
+        // }
+        
+        // console.log(this.previousIndex);
+        //console.log("*****************************************1");
+        //console.log(this.sortedUsers);
+        // if(this.sortedUsers.length > 0){
+        // }else {
+        //   this.greeksFound = false;
+        //   this.update();
+        // }
+        //console.log("*****************************************2");
+        // this.mainSlider.update();
+        //this.cardUserArray.push(this.sortedUsers[0]);
+        //this.cardUsersLoaded = true;
+        //this.ionViewDidLoad();
+        //this.checkLikes();
+        // console.log(this.currentInterlocutorKey);
+        //
+    });
+  }
+
+  private checkIfGreeksFound(arr){
+    // if(arr.length > 0){
+    //   this.greeksFound = false;
+    // }
+  }
+  private calculateAge(b: any) {
+    let birthday = new Date(b.replace(' ', 'T'));
+    let ageDifMs = Date.now() - birthday.getTime();
+    let ageDate = new Date(ageDifMs);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
   }
 
 }
